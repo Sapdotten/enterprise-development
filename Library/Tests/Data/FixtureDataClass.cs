@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Enums;
 
 namespace Tests.Data;
@@ -71,7 +71,7 @@ public class FixtureDataClass
             Id = 6,
             InventoryNumber = 1006,
             Code = "LAV106",
-            Authors = "Шандорв ЛаВей",
+            Authors = "Шандор ЛаВей",
             Title = "Библия Сатаны",
             PublisherType = PublisherType.Commercial,
             Publisher = Publisher.Veche
