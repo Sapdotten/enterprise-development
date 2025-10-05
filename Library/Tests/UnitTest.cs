@@ -34,7 +34,7 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
             (lr, b) => b.Title
             )
             .Distinct()
-            .OrderBy(title => title)
+            .Order()
             .ToList();
 
 
@@ -102,7 +102,7 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
             )
             .Distinct()
             .Select(r => $"{r.SecondName} {r.FirstName} {r.LastName}")
-            .OrderBy(name => name)
+            .Order()
             .ToList();
         Assert.Equal(expectedReaders, actualReaders);
     }
