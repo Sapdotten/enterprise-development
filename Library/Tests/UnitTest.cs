@@ -11,7 +11,6 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
     [Fact]
     public void GetBorrowedBooks()
     {
-
         var expected = new[]
         {
             "1Q84",
@@ -23,22 +22,20 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
             "Практическая информационная безопасность",
             "Трансгуманизм Inc.",
             "Чапаев и Пустота"
-
         };
 
-        var actualBooks = testData.LoanRecords
+        var actual = testData.LoanRecords
             .Join(
-            testData.Books,
-            lr => lr.BookId,
-            b => b.Id,
-            (lr, b) => b.Title
+                testData.Books,
+                lr => lr.BookId,
+                b => b.Id,
+                (lr, b) => b.Title
             )
             .Distinct()
             .Order()
             .ToList();
 
-
-        Assert.Equal(expected, actualBooks);
+        Assert.Equal(expected, actual);
     }
 
     /// <summary>
@@ -47,7 +44,7 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
     [Fact]
     public void GetMostActiveReaders()
     {
-        var expectedReaders = new[]
+        var expected = new[]
         {
             "Алехин Иван Игоревич",
             "Волков Александр Юрьевич",
@@ -55,7 +52,7 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
             "Домнин Никита Михайлович",
             "Иванов Даниил Александрович"
         };
-        var actualReaders = testData.LoanRecords
+        var actual = testData.LoanRecords
             .GroupBy(lr => lr.ReaderId)
             .Select(g => new
             {
@@ -72,22 +69,22 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
             )
             .ToList();
 
-        Assert.Equal(expectedReaders, actualReaders);
+        Assert.Equal(expected, actual);
     }
 
     /// <summary>
     /// Gets readers who borrowed books for the longest loan period, ordered by full name (second name, first name, last name).
     /// </summary>
     [Fact]
-    public void GetReadersWithLongetsLoan()
+    public void GetReadersWithLongestLoan()
     {
-        var expectedReaders = new[]
+        var expected = new[]
         {
             "Волков Александр Юрьевич",
             "Иванов Даниил Александрович"
         };
 
-        var actualReaders = testData.LoanRecords
+        var actual = testData.LoanRecords
             .Where(x => x.LoanTerm == testData.LoanRecords.Max(lr => lr.LoanTerm))
             .Join(
                 testData.Readers,
@@ -104,7 +101,7 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
             .Select(r => $"{r.SecondName} {r.FirstName} {r.LastName}")
             .Order()
             .ToList();
-        Assert.Equal(expectedReaders, actualReaders);
+        Assert.Equal(expected, actual);
     }
 
     /// <summary>
@@ -113,7 +110,7 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
     [Fact]
     public void GetMostPopularPublisher()
     {
-        var expectedPublishers = new[]{
+        var expected = new[]{
             Publisher.AST,
             Publisher.Binom,
             Publisher.Eksmo,
@@ -122,14 +119,14 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
         };
         var oneYearAgo = new DateOnly(2024, 10, 5);
 
-        var topPublishers = testData.LoanRecords
+        var actual = testData.LoanRecords
             .Where(lr => lr.IssueDate >= oneYearAgo)
             .Join(
                 testData.Books,
                 lr => lr.BookId,
                 b => b.Id,
                 (lr, b) => b.Publisher
-               )
+            )
             .GroupBy(p => p)
             .Select(g => new
             {
@@ -143,8 +140,7 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
             .Take(5)
             .ToList();
 
-        Assert.Equal(expectedPublishers, topPublishers);
-
+        Assert.Equal(expected, actual);
     }
 
     /// <summary>
@@ -153,7 +149,7 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
     [Fact]
     public void GetLeastPopularPublisher()
     {
-        var expectedPublishers = new[]{
+        var expected = new[]{
             Publisher.Veche,
             Publisher.Nauka,
             Publisher.AdMarginem,
@@ -162,19 +158,19 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
         };
         var oneYearAgo = new DateOnly(2024, 10, 5);
 
-        var topPublishers = Enum.GetValues<Publisher>()
+        var actual = Enum.GetValues<Publisher>()
             .Select(publisher => new
             {
                 Publisher = publisher,
                 Count = testData.LoanRecords
-                .Where(lr => lr.IssueDate >= oneYearAgo)
-                .Join(
-                    testData.Books,
-                    lr => lr.BookId,
-                    b => b.Id,
-                    (_, b) => b.Publisher
+                    .Where(lr => lr.IssueDate >= oneYearAgo)
+                    .Join(
+                        testData.Books,
+                        lr => lr.BookId,
+                        b => b.Id,
+                        (_, b) => b.Publisher
                     )
-                .Count(bookPublisher => bookPublisher == publisher)
+                    .Count(bookPublisher => bookPublisher == publisher)
             })
             .OrderBy(x => x.Count)
             .ThenBy(x => x.Publisher)
@@ -182,8 +178,6 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
             .Select(X => X.Publisher)
             .ToList();
 
-
-        Assert.Equal(expectedPublishers, topPublishers);
-
+        Assert.Equal(expected, actual);
     }
 }
