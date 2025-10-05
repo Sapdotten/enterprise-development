@@ -175,7 +175,7 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
             .OrderBy(x => x.Count)
             .ThenBy(x => x.Publisher)
             .Take(5)
-            .Select(X => X.Publisher)
+            .Select(x => x.Publisher)
             .ToList();
 
         Assert.Equal(expected, actual);
