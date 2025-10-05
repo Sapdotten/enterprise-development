@@ -1,6 +1,4 @@
-﻿using System.Reflection.PortableExecutable;
-using Domain.Entities;
-using Domain.Enums;
+﻿using Domain.Enums;
 using Tests.Data;
 
 namespace Tests;
@@ -103,7 +101,7 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
                 }
             )
             .Distinct()
-            .Select( r=> $"{r.SecondName} {r.FirstName} {r.LastName}")
+            .Select(r => $"{r.SecondName} {r.FirstName} {r.LastName}")
             .OrderBy(name => name)
             .ToList();
         Assert.Equal(expectedReaders, actualReaders);
@@ -134,10 +132,10 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
                )
             .GroupBy(p => p)
             .Select(g => new
-                {
-                    Publisher = g.Key,
-                    Count = g.Count()
-                }
+            {
+                Publisher = g.Key,
+                Count = g.Count()
+            }
             )
             .OrderByDescending(x => x.Count)
             .ThenBy(x => x.Publisher)

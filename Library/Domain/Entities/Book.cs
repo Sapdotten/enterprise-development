@@ -2,8 +2,6 @@
 
 namespace Domain.Entities;
 
-
-
 /// <summary>
 /// Represents a book in the library system with its metadata, including title, authors, 
 /// catalog information, and publisher details.
