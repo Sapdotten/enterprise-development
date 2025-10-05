@@ -135,105 +135,105 @@ public class FixtureDataClass
     public List<Reader> Readers =>
     [
         new Reader
-            {
-                Id = 1,
-                FirstName = "Иван",
-                SecondName = "Алехин",
-                LastName = "Игоревич",
-                Address = "ул. Ленина, д. 15, кв. 42",
-                PhoneNumber = "+7 (903) 123-45-67",
-                RegistrationDate = new DateOnly(2025, 1, 15)
-            },
-            new Reader
-            {
-                Id = 2,
-                FirstName = "Александр",
-                SecondName = "Волков",
-                LastName = "Юрьевич",
-                Address = "пр. Победы, д. 8, кв. 112",
-                PhoneNumber = "+7 (915) 234-56-78",
-                RegistrationDate = new DateOnly(2025, 2, 10)
-            },
-            new Reader
-            {
-                Id = 3,
-                FirstName = "Никита",
-                SecondName = "Гришин",
-                LastName = "Павлович",
-                Address = "ул. Мира, д. 27, кв. 33",
-                PhoneNumber = "+7 (926) 345-67-89",
-                RegistrationDate = new DateOnly(2025, 2, 20)
-            },
-            new Reader
-            {
-                Id = 4,
-                FirstName = "Никита",
-                SecondName = "Домнин",
-                LastName = "Михайлович",
-                Address = "ш. Энтузиастов, д. 5, кв. 76",
-                PhoneNumber = "+7 (937) 456-78-90",
-                RegistrationDate = new DateOnly(2025, 3, 5)
-            },
-            new Reader
-            {
-                Id = 5,
-                FirstName = "Даниил",
-                SecondName = "Иванов",
-                LastName = "Александрович",
-                Address = "ул. Космонавтов, д. 11, кв. 29",
-                PhoneNumber = "+7 (905) 567-89-01",
-                RegistrationDate = new DateOnly(2025, 1, 30)
-            },
-            new Reader
-            {
-                Id = 6,
-                FirstName = "Дмитрий",
-                SecondName = "Коновалов",
-                LastName = "Сергеевич",
-                Address = "пр. Мира, д. 34, кв. 55",
-                PhoneNumber = "+7 (916) 678-90-12",
-                RegistrationDate = new DateOnly(2025, 3, 12)
-            },
-            new Reader
-            {
-                Id = 7,
-                FirstName = "Родион",
-                SecondName = "Маркелов",
-                LastName = "Алексеевич",
-                Address = "ул. Строителей, д. 7, кв. 18",
-                PhoneNumber = "+7 (927) 789-01-23",
-                RegistrationDate = new DateOnly(2025, 2, 25)
-            },
-            new Reader
-            {
-                Id = 8,
-                FirstName = "Андрей",
-                SecondName = "Панявкин",
-                LastName = "Сергеевич",
-                Address = "ул. Радужная, д. 4, кв. 63",
-                PhoneNumber = "+7 (936) 890-12-34",
-                RegistrationDate = new DateOnly(2025, 3, 18)
-            },
-            new Reader
-            {
-                Id = 9,
-                FirstName = "Матвей",
-                SecondName = "Пихуров",
-                LastName = "Алексеевич",
-                Address = "пр. Ленинский, д. 22, кв. 91",
-                PhoneNumber = "+7 (904) 901-23-45",
-                RegistrationDate = new DateOnly(2025, 3, 22)
-            },
-            new Reader
-            {
-                Id = 10,
-                FirstName = "Артём",
-                SecondName = "Шикунов",
-                LastName = "Дмитриевич",
-                Address = "ул. Трудовая, д. 19, кв. 5",
-                PhoneNumber = "+7 (915) 012-34-56",
-                RegistrationDate = new DateOnly(2025, 1, 20)
-            }
+        {
+            Id = 1,
+            FirstName = "Иван",
+            SecondName = "Алехин",
+            LastName = "Игоревич",
+            Address = "ул. Ленина, д. 15, кв. 42",
+            PhoneNumber = "+7 (903) 123-45-67",
+            RegistrationDate = new DateOnly(2025, 1, 15)
+        },
+        new Reader
+        {
+            Id = 2,
+            FirstName = "Александр",
+            SecondName = "Волков",
+            LastName = "Юрьевич",
+            Address = "пр. Победы, д. 8, кв. 112",
+            PhoneNumber = "+7 (915) 234-56-78",
+            RegistrationDate = new DateOnly(2025, 2, 10)
+        },
+        new Reader
+        {
+            Id = 3,
+            FirstName = "Никита",
+            SecondName = "Гришин",
+            LastName = "Павлович",
+            Address = "ул. Мира, д. 27, кв. 33",
+            PhoneNumber = "+7 (926) 345-67-89",
+            RegistrationDate = new DateOnly(2025, 2, 20)
+        },
+        new Reader
+        {
+            Id = 4,
+            FirstName = "Никита",
+            SecondName = "Домнин",
+            LastName = "Михайлович",
+            Address = "ш. Энтузиастов, д. 5, кв. 76",
+            PhoneNumber = "+7 (937) 456-78-90",
+            RegistrationDate = new DateOnly(2025, 3, 5)
+        },
+        new Reader
+        {
+            Id = 5,
+            FirstName = "Даниил",
+            SecondName = "Иванов",
+            LastName = "Александрович",
+            Address = "ул. Космонавтов, д. 11, кв. 29",
+            PhoneNumber = "+7 (905) 567-89-01",
+            RegistrationDate = new DateOnly(2025, 1, 30)
+        },
+        new Reader
+        {
+            Id = 6,
+            FirstName = "Дмитрий",
+            SecondName = "Коновалов",
+            LastName = "Сергеевич",
+            Address = "пр. Мира, д. 34, кв. 55",
+            PhoneNumber = "+7 (916) 678-90-12",
+            RegistrationDate = new DateOnly(2025, 3, 12)
+        },
+        new Reader
+        {
+            Id = 7,
+            FirstName = "Родион",
+            SecondName = "Маркелов",
+            LastName = "Алексеевич",
+            Address = "ул. Строителей, д. 7, кв. 18",
+            PhoneNumber = "+7 (927) 789-01-23",
+            RegistrationDate = new DateOnly(2025, 2, 25)
+        },
+        new Reader
+        {
+            Id = 8,
+            FirstName = "Андрей",
+            SecondName = "Панявкин",
+            LastName = "Сергеевич",
+            Address = "ул. Радужная, д. 4, кв. 63",
+            PhoneNumber = "+7 (936) 890-12-34",
+            RegistrationDate = new DateOnly(2025, 3, 18)
+        },
+        new Reader
+        {
+            Id = 9,
+            FirstName = "Матвей",
+            SecondName = "Пихуров",
+            LastName = "Алексеевич",
+            Address = "пр. Ленинский, д. 22, кв. 91",
+            PhoneNumber = "+7 (904) 901-23-45",
+            RegistrationDate = new DateOnly(2025, 3, 22)
+        },
+        new Reader
+        {
+            Id = 10,
+            FirstName = "Артём",
+            SecondName = "Шикунов",
+            LastName = "Дмитриевич",
+            Address = "ул. Трудовая, д. 19, кв. 5",
+            PhoneNumber = "+7 (915) 012-34-56",
+            RegistrationDate = new DateOnly(2025, 1, 20)
+        }
     ];
 
     /// <summary>
