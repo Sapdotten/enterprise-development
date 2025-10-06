@@ -39,10 +39,10 @@ public class LibraryTest(FixtureDataClass testData) : IClassFixture<FixtureDataC
     }
 
     /// <summary>
-    /// Gets the top 5 most active readers who borrowed the highest number of books.
+    /// Gets the top 5 most active readers who borrowed the highest number of books during a certain period 
     /// </summary>
     [Fact]
-    public void GetMostActiveReaders()
+    public void GetMostActiveReadersDuringPeriod()
     {
         var expected = new[]
         {
