@@ -3,7 +3,7 @@ using Tests.Data;
 
 namespace Tests;
 
-public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClass>
+public class LibraryTest(FixtureDataClass testData) : IClassFixture<FixtureDataClass>
 {
     /// <summary>
     /// Gets the list of borrowed books, ordered alphabetically by title.
@@ -46,13 +46,17 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
     {
         var expected = new[]
         {
-            "Алехин Иван Игоревич",
             "Волков Александр Юрьевич",
-            "Гришин Никита Павлович",
+            "Алехин Иван Игоревич",
             "Домнин Никита Михайлович",
-            "Иванов Даниил Александрович"
+            "Иванов Даниил Александрович",
+            "Панявкин Андрей Сергеевич"
         };
+        var startDate = new DateOnly(2025, 1, 1);
+        var endDate = new DateOnly(2025, 3, 25);
+
         var actual = testData.LoanRecords
+            .Where(lr => lr.IssueDate >= startDate && lr.IssueDate <= endDate)
             .GroupBy(lr => lr.ReaderId)
             .Select(g => new
             {
@@ -101,6 +105,7 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
             .Select(r => $"{r.SecondName} {r.FirstName} {r.LastName}")
             .Order()
             .ToList();
+
         Assert.Equal(expected, actual);
     }
 
@@ -110,17 +115,19 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
     [Fact]
     public void GetMostPopularPublisher()
     {
-        var expected = new[]{
+        var expected = new[]
+        {
             Publisher.AST,
             Publisher.Binom,
             Publisher.Eksmo,
             Publisher.Mir,
             Publisher.AdMarginem
         };
-        var oneYearAgo = new DateOnly(2024, 10, 5);
+        var startDate = new DateOnly(2024, 10, 5);
+        var endDate = new DateOnly(2025, 10, 5);
 
         var actual = testData.LoanRecords
-            .Where(lr => lr.IssueDate >= oneYearAgo)
+            .Where(lr => lr.IssueDate >= startDate && lr.IssueDate <= endDate)
             .Join(
                 testData.Books,
                 lr => lr.BookId,
@@ -132,8 +139,7 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
             {
                 Publisher = g.Key,
                 Count = g.Count()
-            }
-            )
+            })
             .OrderByDescending(x => x.Count)
             .ThenBy(x => x.Publisher)
             .Select(x => x.Publisher)
@@ -144,38 +150,43 @@ public class UnitTest(FixtureDataClass testData) : IClassFixture<FixtureDataClas
     }
 
     /// <summary>
-    /// Gets the top 5 least popular publishers over the last year, including those with zero loans, ordered by loan count and then by publisher name.
+    /// Gets the top 5 least popular books over the last year, including those with zero loans, ordered by loan count and then by title.
     /// </summary>
     [Fact]
-    public void GetLeastPopularPublisher()
+    public void GetLeastPopularBooks()
     {
-        var expected = new[]{
-            Publisher.Veche,
-            Publisher.Nauka,
-            Publisher.AdMarginem,
-            Publisher.Eksmo,
-            Publisher.Mir
+        var expected = new[]
+        {
+            "1Q84",
+            "Ампир V",
+            "Архитектура компьютера",
+            "Игра престолов",
+            "Пикник на обочине"
         };
-        var oneYearAgo = new DateOnly(2024, 10, 5);
+        var startDate = new DateOnly(2024, 10, 5);
+        var endDate = new DateOnly(2025, 10, 5);
 
-        var actual = Enum.GetValues<Publisher>()
-            .Select(publisher => new
+        var actual = testData.LoanRecords
+            .GroupBy(lr => lr.BookId)
+            .Select(g => new
             {
-                Publisher = publisher,
-                Count = testData.LoanRecords
-                    .Where(lr => lr.IssueDate >= oneYearAgo)
-                    .Join(
-                        testData.Books,
-                        lr => lr.BookId,
-                        b => b.Id,
-                        (_, b) => b.Publisher
-                    )
-                    .Count(bookPublisher => bookPublisher == publisher)
+                book_id = g.Key,
+                count = g.Count()
+
             })
-            .OrderBy(x => x.Count)
-            .ThenBy(x => x.Publisher)
+            .Join(
+            testData.Books,
+            g => g.book_id,
+            b => b.Id,
+            (g, b) => new
+            {
+                b.Title,
+                g.count
+            })
+            .OrderBy(x => x.count)
+            .ThenBy(x => x.Title)
             .Take(5)
-            .Select(x => x.Publisher)
+            .Select(x => x.Title)
             .ToList();
 
         Assert.Equal(expected, actual);
