@@ -1,4 +1,4 @@
-﻿namespace Domain.Enums;
+﻿namespace Library.Domain.Enums;
 
 /// <summary>
 /// Defines the category of a publisher based on its primary focus: educational, commercial, or academic.

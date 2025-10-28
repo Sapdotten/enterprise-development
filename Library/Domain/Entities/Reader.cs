@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities;
+﻿namespace Library.Domain.Entities;
 
 /// <summary>
 /// Represents a library reader (patron) with personal information and contact details.

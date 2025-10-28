@@ -1,6 +1,6 @@
-﻿using Domain.Enums;
+﻿using Library.Domain.Enums;
 
-namespace Domain.Entities;
+namespace Library.Domain.Entities;
 
 /// <summary>
 /// Represents a book in the library system with its metadata, including title, authors, 

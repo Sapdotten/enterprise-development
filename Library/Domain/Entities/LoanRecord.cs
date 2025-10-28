@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities;
+﻿namespace Library.Domain.Entities;
 
 /// <summary>
 /// Represents a record of a book loan, capturing the details of when and to whom a book was issued.

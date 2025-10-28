@@ -1,4 +1,4 @@
-﻿namespace Domain.Enums;
+﻿namespace Library.Domain.Enums;
 /// <summary>
 /// List of supported publishers in the library system.
 /// </summary>

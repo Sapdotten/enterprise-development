@@ -1,7 +1,7 @@
-using Domain.Entities;
-using Domain.Enums;
+using Library.Domain.Entities;
+using Library.Domain.Enums;
 
-namespace Tests.Data;
+namespace Library.Tests.Data;
 
 /// <summary>
 /// Provides a comprehensive set of test data fixtures for the Library domain entities.

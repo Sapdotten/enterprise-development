@@ -1,7 +1,7 @@
-﻿using Domain.Enums;
-using Tests.Data;
+﻿using Library.Domain.Enums;
+using Library.Tests.Data;
 
-namespace Tests;
+namespace Library.Tests;
 
 public class LibraryTest(FixtureDataClass testData) : IClassFixture<FixtureDataClass>
 {
