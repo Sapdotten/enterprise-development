@@ -9,38 +9,43 @@ namespace Library.Domain.Entities;
 public class Book
 {
     /// <summary>
-    /// Unqiue identifier of book
+    /// Unqiue identifier of the book.
     /// </summary>
     public int Id { get; set; }
 
     /// <summary>
-    /// Unique inventory number of book
+    /// Unique inventory number of the book.
     /// </summary>
     public required int InventoryNumber { get; set; }
 
     /// <summary>
-    /// Catalog book code
+    /// Catalog book code.
     /// </summary>
     public required string Code { get; set; }
 
     /// <summary>
-    /// Authors of book
+    /// Authors of the book.
     /// </summary>
     public required string Authors { get; set; }
 
     /// <summary>
-    /// Name of book
+    /// Name of the book.
     /// </summary>
     public required string Title { get; set; }
 
     /// <summary>
-    /// Publication type of book
+    /// Publication type of the book.
     /// </summary>
     public required PublisherType PublisherType { get; set; }
 
     /// <summary>
-    /// Publisher of book
+    /// Publisher of the book.
     /// </summary>
     public required Publisher Publisher { get; set; }
+
+    /// <summary>
+    /// The year of the book's publication.
+    /// </summary>
+    public required int Year { get; set; }
 
 }

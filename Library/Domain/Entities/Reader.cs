@@ -12,14 +12,14 @@ public class Reader
     public required string FirstName { get; set; }
 
     /// <summary>
-    /// Second Name of reader
-    /// </summary>
-    public required string SecondName { get; set; }
-
-    /// <summary>
     /// Last Name of reader
     /// </summary>
     public required string LastName { get; set; }
+
+    /// <summary>
+    /// Patronymic Name of reader
+    /// </summary>
+    public required string PatronymicName { get; set; }
 
     /// <summary>
     /// Address of reader
