@@ -1,9 +1,8 @@
 ﻿using Library.Domain.Enums;
-using Library.Tests.Data;
 
 namespace Library.Tests;
 
-public class LibraryTest(FixtureDataClass testData) : IClassFixture<FixtureDataClass>
+public class LibraryTest(LibraryFixture fixture) : IClassFixture<LibraryFixture>
 {
     /// <summary>
     /// Gets the list of borrowed books, ordered alphabetically by title.
@@ -23,10 +22,12 @@ public class LibraryTest(FixtureDataClass testData) : IClassFixture<FixtureDataC
             "Трансгуманизм Inc.",
             "Чапаев и Пустота"
         };
+        var loanRecords = fixture.LoanRecords.ReadAll();
+        var books = fixture.Books.ReadAll();
 
-        var actual = testData.LoanRecords
+        var actual = loanRecords
             .Join(
-                testData.Books,
+                books,
                 lr => lr.BookId,
                 b => b.Id,
                 (lr, b) => b.Title
@@ -54,8 +55,10 @@ public class LibraryTest(FixtureDataClass testData) : IClassFixture<FixtureDataC
         };
         var startDate = new DateOnly(2025, 1, 1);
         var endDate = new DateOnly(2025, 3, 25);
+        var loanRecords = fixture.LoanRecords.ReadAll();
+        var readers = fixture.Readers.ReadAll();
 
-        var actual = testData.LoanRecords
+        var actual = loanRecords
             .Where(lr => lr.IssueDate >= startDate && lr.IssueDate <= endDate)
             .GroupBy(lr => lr.ReaderId)
             .Select(g => new
@@ -66,10 +69,10 @@ public class LibraryTest(FixtureDataClass testData) : IClassFixture<FixtureDataC
             .OrderByDescending(x => x.Count)
             .Take(5)
             .Join(
-                testData.Readers,
+                readers,
                 result => result.ReaderId,
                 reader => reader.Id,
-                (result, reader) => $"{reader.SecondName} {reader.FirstName} {reader.LastName}"
+                (result, reader) => $"{reader.LastName} {reader.FirstName} {reader.PatronymicName}"
             )
             .ToList();
 
@@ -84,25 +87,27 @@ public class LibraryTest(FixtureDataClass testData) : IClassFixture<FixtureDataC
     {
         var expected = new[]
         {
-            "Волков Александр Юрьевич",
-            "Иванов Даниил Александрович"
+            "Алехин Иван Игоревич",
+            "Волков Александр Юрьевич"
         };
+        var loanRecords = fixture.LoanRecords.ReadAll();
+        var readers = fixture.Readers.ReadAll();
 
-        var actual = testData.LoanRecords
-            .Where(x => x.LoanTerm == testData.LoanRecords.Max(lr => lr.LoanTerm))
+        var actual = loanRecords
+            .Where(x => x.LoanTerm == loanRecords.Max(lr => lr.LoanTerm))
             .Join(
-                testData.Readers,
+                readers,
                 lr => lr.ReaderId,
                 r => r.Id,
                 (lr, r) => new
                 {
-                    r.SecondName,
+                    r.LastName,
                     r.FirstName,
-                    r.LastName
+                    r.PatronymicName
                 }
             )
             .Distinct()
-            .Select(r => $"{r.SecondName} {r.FirstName} {r.LastName}")
+            .Select(r => $"{r.LastName} {r.FirstName} {r.PatronymicName}")
             .Order()
             .ToList();
 
@@ -125,11 +130,13 @@ public class LibraryTest(FixtureDataClass testData) : IClassFixture<FixtureDataC
         };
         var startDate = new DateOnly(2024, 10, 5);
         var endDate = new DateOnly(2025, 10, 5);
+        var loanRecords = fixture.LoanRecords.ReadAll();
+        var books = fixture.Books.ReadAll();
 
-        var actual = testData.LoanRecords
+        var actual = loanRecords
             .Where(lr => lr.IssueDate >= startDate && lr.IssueDate <= endDate)
             .Join(
-                testData.Books,
+                books,
                 lr => lr.BookId,
                 b => b.Id,
                 (lr, b) => b.Publisher
@@ -165,8 +172,10 @@ public class LibraryTest(FixtureDataClass testData) : IClassFixture<FixtureDataC
         };
         var startDate = new DateOnly(2024, 10, 5);
         var endDate = new DateOnly(2025, 10, 5);
+        var loanRecords = fixture.LoanRecords.ReadAll();
+        var books = fixture.Books.ReadAll();
 
-        var actual = testData.LoanRecords
+        var actual = loanRecords
             .GroupBy(lr => lr.BookId)
             .Select(g => new
             {
@@ -175,7 +184,7 @@ public class LibraryTest(FixtureDataClass testData) : IClassFixture<FixtureDataC
 
             })
             .Join(
-            testData.Books,
+            books,
             g => g.book_id,
             b => b.Id,
             (g, b) => new
