@@ -9,5 +9,5 @@ namespace Library.Api.Controllers;
 /// </summary>
 /// <param name="readerService">Service handling reader-related business logic.</param>
 /// <param name="logger">Logger instance for diagnostics and request tracing.</param>
-public class BookReaderController(IApplicationService<ReaderGetDTO, ReaderCreateDTO, int> readerService, ILogger<BookReaderController> logger)
+public class ReaderController(IApplicationService<ReaderGetDTO, ReaderCreateDTO, int> readerService, ILogger<ReaderController> logger)
     : CrudControllerBase<ReaderGetDTO, ReaderCreateDTO, int>(readerService, logger);

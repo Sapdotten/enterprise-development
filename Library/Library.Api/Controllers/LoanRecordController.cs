@@ -7,7 +7,7 @@ namespace Library.Api.Controllers;
 /// REST controller for managing book checkout operations.
 /// Handles loan records through CRUD endpoints inherited from CrudControllerBase.
 /// </summary>
-/// <param name="checkoutService">Service responsible for loan record operations.</param>
+/// <param name="loanRecordService">Service responsible for loan record operations.</param>
 /// <param name="logger">Logger instance for diagnostics and monitoring.</param>
-public class BookCheckoutController(IApplicationService<LoanRecordGetDTO, LoanRecordCreateDTO, int> checkoutService, ILogger<BookCheckoutController> logger)
-    : CrudControllerBase<LoanRecordGetDTO, LoanRecordCreateDTO, int>(checkoutService, logger);
+public class LoanRecordController(IApplicationService<LoanRecordGetDTO, LoanRecordCreateDTO, int> loanRecordService, ILogger<LoanRecordController> logger)
+    : CrudControllerBase<LoanRecordGetDTO, LoanRecordCreateDTO, int>(loanRecordService, logger);
