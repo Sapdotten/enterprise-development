@@ -10,7 +10,7 @@ namespace Library.Infrastructure.Repositories;
 /// </summary>
 public class LoanRecordRepository : IRepository<LoanRecord, int>
 {
-    private List<LoanRecord> _loanRecords;
+    private readonly List<LoanRecord> _loanRecords;
     private int _maxId;
 
     /// <summary>

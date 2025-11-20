@@ -10,7 +10,7 @@ namespace Library.Infrastructure.Repositories;
 /// </summary>
 public class ReaderRepository : IRepository<Reader, int>
 {
-    private List<Reader> _readers;
+    private readonly List<Reader> _readers;
     private int _maxId;
 
     /// <summary>
