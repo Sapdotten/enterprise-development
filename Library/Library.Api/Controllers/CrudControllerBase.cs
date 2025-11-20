@@ -13,40 +13,8 @@ namespace Library.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
-    IApplicationService<TGetDto, TCreateDto, TKey> appService,
-    ILogger<CrudControllerBase<TGetDto, TCreateDto, TKey>> logger) : ControllerBase
+    IApplicationService<TGetDto, TCreateDto, TKey> appService) : ControllerBase
 {
-    /// <summary>
-    /// Executes an operation with logging and error handling.
-    /// Logs initiation, success with item count, or failure with exception details.
-    /// </summary>
-    /// <param name="operation">Name of the operation being executed.</param>
-    /// <param name="action">Delegate representing the operation to execute.</param>
-    /// <returns>Action result wrapped in logging and exception handling.</returns>
-    protected ActionResult Logging(string operation, Func<ActionResult> action)
-    {
-        logger.LogInformation("Initiating {Operation}", operation);
-        try
-        {
-            var result = action();
-            var count = 0;
-            if (result is OkObjectResult okResult && okResult.Value != null)
-            {
-                if (okResult.Value is System.Collections.IEnumerable collection)
-                {
-                    count = collection.Cast<object>().Count();
-                }
-                else count = 1;
-            }
-            logger.LogInformation("Completed {Operation}. Retrieved {Count} items.", operation, count);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to execute {Operation}", operation);
-            return StatusCode(500, $"Internal error occurred: {ex.Message}");
-        }
-    }
 
     /// <summary>
     /// Creates a new entity from the provided DTO.
@@ -56,13 +24,11 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(500)]
+    [ServiceFilter<LoggingActionFilter>]
     public ActionResult<TGetDto> Create(TCreateDto newDto)
     {
-        return Logging(nameof(Create), () =>
-        {
-            var result = appService.Create(newDto);
-            return CreatedAtAction(nameof(Create), result);
-        });
+        var result = appService.Create(newDto);
+        return CreatedAtAction(nameof(Create), result);
     }
 
     /// <summary>
@@ -74,20 +40,18 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
+    [ServiceFilter<LoggingActionFilter>]
     public ActionResult<TGetDto> Edit(TKey id, TCreateDto newDto)
     {
-        return Logging(nameof(Edit), () =>
+        try
         {
-            try
-            {
-                var result = appService.Update(newDto, id);
-                return Ok(result);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-        });
+            var result = appService.Update(newDto, id);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 
     /// <summary>
@@ -97,13 +61,11 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     /// <returns>204 on success.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(204)]
+    [ServiceFilter<LoggingActionFilter>]
     public IActionResult Delete(TKey id)
     {
-        return Logging(nameof(Delete), () =>
-        {
-            appService.Delete(id);
-            return NoContent();
-        });
+        appService.Delete(id);
+        return NoContent();
     }
 
     /// <summary>
@@ -113,13 +75,11 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
+    [ServiceFilter<LoggingActionFilter>]
     public ActionResult<IList<TGetDto>> GetAll()
     {
-        return Logging(nameof(GetAll), () =>
-        {
-            var result = appService.GetAll();
-            return Ok(result);
-        });
+        var result = appService.GetAll();
+        return Ok(result);
     }
 
     /// <summary>
@@ -131,19 +91,17 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
+    [ServiceFilter<LoggingActionFilter>]
     public ActionResult<TGetDto> Get(TKey id)
     {
-        return Logging(nameof(Get), () =>
+        try
         {
-            try
-            {
-                var result = appService.Get(id);
-                return Ok(result);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-        });
+            var result = appService.Get(id);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 }

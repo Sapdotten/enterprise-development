@@ -8,6 +8,5 @@ namespace Library.Api.Controllers;
 /// Handles loan records through CRUD endpoints inherited from CrudControllerBase.
 /// </summary>
 /// <param name="loanRecordService">Service responsible for loan record operations.</param>
-/// <param name="logger">Logger instance for diagnostics and monitoring.</param>
-public class LoanRecordController(IApplicationService<LoanRecordGetDto, LoanRecordCreateDto, int> loanRecordService, ILogger<LoanRecordController> logger)
-    : CrudControllerBase<LoanRecordGetDto, LoanRecordCreateDto, int>(loanRecordService, logger);
+public class LoanRecordController(IApplicationService<LoanRecordGetDto, LoanRecordCreateDto, int> loanRecordService)
+    : CrudControllerBase<LoanRecordGetDto, LoanRecordCreateDto, int>(loanRecordService);

@@ -16,6 +16,8 @@ var mapperConfig = new MapperConfiguration(
 IMapper mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
+builder.Services.AddScoped<LoggingActionFilter>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 

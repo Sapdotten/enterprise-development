@@ -8,6 +8,5 @@ namespace Library.Api.Controllers;
 /// Exposes CRUD endpoints for readers via inheritance from CrudControllerBase.
 /// </summary>
 /// <param name="readerService">Service handling reader-related business logic.</param>
-/// <param name="logger">Logger instance for diagnostics and request tracing.</param>
-public class ReaderController(IApplicationService<ReaderGetDto, ReaderCreateDto, int> readerService, ILogger<ReaderController> logger)
-    : CrudControllerBase<ReaderGetDto, ReaderCreateDto, int>(readerService, logger);
+public class ReaderController(IApplicationService<ReaderGetDto, ReaderCreateDto, int> readerService)
+    : CrudControllerBase<ReaderGetDto, ReaderCreateDto, int>(readerService);

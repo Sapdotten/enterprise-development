@@ -8,6 +8,5 @@ namespace Library.Api.Controllers;
 /// Inherits CRUD operations from CrudControllerBase.
 /// </summary>
 /// <param name="bookService">Service handling book operations.</param>
-/// <param name="logger">Logger instance for diagnostics.</param>
-public class BookController(IApplicationService<BookGetDto, BookCreateDto, int> bookService, ILogger<BookController> logger)
-    : CrudControllerBase<BookGetDto, BookCreateDto, int>(bookService, logger);
+public class BookController(IApplicationService<BookGetDto, BookCreateDto, int> bookService)
+    : CrudControllerBase<BookGetDto, BookCreateDto, int>(bookService);

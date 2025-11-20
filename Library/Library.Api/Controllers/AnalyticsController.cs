@@ -15,40 +15,6 @@ public class AnalyticsController(
     ILibraryAnalyticsService analyticsService,
     ILogger<AnalyticsController> logger) : ControllerBase
 {
-    /// <summary>
-    /// Executes a given action with structured logging and centralized error handling.
-    /// Logs operation start, success (including item count), or failure with exception details.
-    /// </summary>
-    /// <param name="operation">Name of the operation being executed.</param>
-    /// <param name="action">Delegate representing the logic to execute.</param>
-    /// <returns>The result of the action wrapped in logging and exception safety.</returns>
-    private ActionResult Logging(string operation, Func<ActionResult> action)
-    {
-        logger.LogInformation("Starting operation: {Operation}", operation);
-        try
-        {
-            var result = action();
-            var count = 0;
-            if (result is OkObjectResult okResult && okResult.Value != null)
-            {
-                if (okResult.Value is System.Collections.IEnumerable collection)
-                {
-                    count = collection.Cast<object>().Count();
-                }
-                else
-                {
-                    count = 1;
-                }
-            }
-            logger.LogInformation("Operation {Operation} completed successfully. Items returned: {Count}.", operation, count);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Operation {Operation} terminated with exception.", operation);
-            return StatusCode(500, $"An unexpected error occurred: {ex.Message}");
-        }
-    }
 
     /// <summary>
     /// Retrieves a list of all books currently loaned out, ordered alphabetically by title.
@@ -62,14 +28,12 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<BookLoanCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
+    [ServiceFilter<LoggingActionFilter>]
     public ActionResult<List<BookLoanCountDto>> GetBooksOrderedByTitle()
     {
-        return Logging(nameof(GetBooksOrderedByTitle), () =>
-        {
-            var today = DateOnly.FromDateTime(DateTime.Today);
-            var result = analyticsService.GetLoanedBooksOrderedByTitle(today);
-            return Ok(result);
-        });
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var result = analyticsService.GetLoanedBooksOrderedByTitle(today);
+        return Ok(result);
     }
 
     /// <summary>
@@ -87,16 +51,14 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<ReaderLoanCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
+    [ServiceFilter<LoggingActionFilter>]
     public ActionResult<List<ReaderLoanCountDto>> GetTopReadersByNumberOfBooks(
         [FromQuery] DateOnly start,
         [FromQuery] DateOnly end,
         [FromQuery] int resultCount = 5)
     {
-        return Logging(nameof(GetTopReadersByNumberOfBooks), () =>
-        {
-            var result = analyticsService.GetTopReadersByLoanCount(start, end, resultCount);
-            return Ok(result);
-        });
+        var result = analyticsService.GetTopReadersByLoanCount(start, end, resultCount);
+        return Ok(result);
     }
 
     /// <summary>
@@ -112,13 +74,11 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<ReaderLoanDurationDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
+    [ServiceFilter<LoggingActionFilter>]
     public ActionResult<List<ReaderLoanDurationDto>> GetTopReadersByTotalLoanDays()
     {
-        return Logging(nameof(GetTopReadersByTotalLoanDays), () =>
-        {
-            var result = analyticsService.GetTopReadersByLongestLoanTermOrderedByName();
-            return result.Count > 0 ? Ok(result) : NoContent();
-        });
+        var result = analyticsService.GetTopReadersByLongestLoanTermOrderedByName();
+        return result.Count > 0 ? Ok(result) : NoContent();
     }
 
     /// <summary>
@@ -136,16 +96,14 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<PublisherLoanCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
+    [ServiceFilter<LoggingActionFilter>]
     public ActionResult<List<PublisherLoanCountDto>> GetTopPopularPublishersLastYear(
         [FromQuery] DateOnly start,
         [FromQuery] DateOnly end,
         [FromQuery] int resultCount = 5)
     {
-        return Logging(nameof(GetTopPopularPublishersLastYear), () =>
-        {
-            var result = analyticsService.GetTopPublishersByLoanCount(start, end, resultCount);
-            return Ok(result);
-        });
+        var result = analyticsService.GetTopPublishersByLoanCount(start, end, resultCount);
+        return Ok(result);
     }
 
     /// <summary>
@@ -163,15 +121,13 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<BookLoanCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
+    [ServiceFilter<LoggingActionFilter>]
     public ActionResult<List<BookLoanCountDto>> GetTopLeastPopularBooksLastYear(
         [FromQuery] DateOnly start,
         [FromQuery] DateOnly end,
         [FromQuery] int resultCount = 5)
     {
-        return Logging(nameof(GetTopLeastPopularBooksLastYear), () =>
-        {
-            var result = analyticsService.GetBooksByLowestLoanCount(start, end, resultCount);
-            return Ok(result);
-        });
+        var result = analyticsService.GetBooksByLowestLoanCount(start, end, resultCount);
+        return Ok(result);
     }
 }
