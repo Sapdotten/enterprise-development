@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Library.Application.Contracts.DTOs;
+using Library.Application.Contracts.Dtos;
 using Library.Application.Contracts.Interfaces;
 using Library.Domain.Interfaces;
 using Library.Domain.Entities;
@@ -11,18 +11,18 @@ namespace Library.Application.Services;
 /// </summary>
 public class LoanRecordService(
     IRepository<LoanRecord, int> loanRecordRepository, IMapper mapper
-    ) : IApplicationService<LoanRecordGetDTO, LoanRecordCreateDTO, int>
+    ) : IApplicationService<LoanRecordGetDto, LoanRecordCreateDto, int>
 {
     /// <summary>
     /// Creates a new loan record from the provided DTO.
     /// </summary>
     /// <param name="dto">The DTO containing loan record data. Must not be null.</param>
     /// <returns>The created loan record as a LoanRecordGetDTO.</returns>
-    public LoanRecordGetDTO Create(LoanRecordCreateDTO dto)
+    public LoanRecordGetDto Create(LoanRecordCreateDto dto)
     {
         var newLoanRecord = mapper.Map<LoanRecord>(dto);
         loanRecordRepository.Create(newLoanRecord);
-        return mapper.Map<LoanRecordGetDTO>(newLoanRecord);
+        return mapper.Map<LoanRecordGetDto>(newLoanRecord);
     }
 
     /// <summary>
@@ -31,20 +31,20 @@ public class LoanRecordService(
     /// <param name="dtoId">The ID of the loan record to retrieve.</param>
     /// <returns>The loan record as a LoanRecordGetDTO if found.</returns>
     /// <exception cref="InvalidOperationException">Thrown when no loan record exists with the given ID.</exception>
-    public LoanRecordGetDTO Get(int dtoId)
+    public LoanRecordGetDto Get(int dtoId)
     {
         var loanRecord = loanRecordRepository.Read(dtoId) ?? throw new InvalidOperationException($"Loan record with {dtoId} was not found");
-        return mapper.Map<LoanRecordGetDTO>(loanRecord);
+        return mapper.Map<LoanRecordGetDto>(loanRecord);
     }
 
     /// <summary>
     /// Retrieves a list of all loan records.
     /// </summary>
     /// <returns>A list of all loan records represented as LoanRecordGetDTOs. Returns empty list if none exist.</returns>
-    public List<LoanRecordGetDTO> GetAll()
+    public List<LoanRecordGetDto> GetAll()
     {
         var loanRecords = loanRecordRepository.ReadAll();
-        return mapper.Map<List<LoanRecordGetDTO>>(loanRecords);
+        return mapper.Map<List<LoanRecordGetDto>>(loanRecords);
     }
 
     /// <summary>
@@ -54,11 +54,11 @@ public class LoanRecordService(
     /// <param name="dtoId">The ID of the loan record to update.</param>
     /// <returns>The updated loan record as a LoanRecordGetDTO.</returns>
     /// <exception cref="InvalidOperationException">Thrown when no loan record exists with the given ID.</exception>
-    public LoanRecordGetDTO Update(LoanRecordCreateDTO dto, int dtoId)
+    public LoanRecordGetDto Update(LoanRecordCreateDto dto, int dtoId)
     {
         var toUpdateLoanRecord = loanRecordRepository.Read(dtoId) ?? throw new InvalidOperationException($"Loan record with ID {dtoId} was not found for updating");
         loanRecordRepository.Update(toUpdateLoanRecord);
-        return mapper.Map<LoanRecordGetDTO>(toUpdateLoanRecord);
+        return mapper.Map<LoanRecordGetDto>(toUpdateLoanRecord);
     }
 
     /// <summary>

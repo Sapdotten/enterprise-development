@@ -1,9 +1,9 @@
-﻿namespace Library.Application.Contracts.DTOs.AnalyticsDTOs;
+﻿namespace Library.Application.Contracts.Dtos.AnalyticsDtos;
 
 /// <summary>
 /// Data transfer object representing a publisher's loan statistics.
 /// </summary>
-public class PublisherLoanCountDTO
+public class PublisherLoanCountDto
 {
     /// <summary>
     /// Name of the publisher.

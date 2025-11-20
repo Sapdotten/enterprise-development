@@ -1,11 +1,11 @@
-﻿namespace Library.Application.Contracts.DTOs;
+﻿namespace Library.Application.Contracts.Dtos;
 
 /// <summary>
 /// Data Transfer Object representing a book retrieved from the library system.
 /// Contains full book metadata including identifier, catalog information, authorship, 
 /// publication details, and is used in read operations across services and API endpoints.
 /// </summary>
-public class BookGetDTO
+public class BookGetDto
 {
     /// <summary>
     /// Unique identifier of the book.

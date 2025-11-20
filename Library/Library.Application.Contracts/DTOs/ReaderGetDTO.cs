@@ -1,9 +1,9 @@
-﻿namespace Library.Application.Contracts.DTOs;
+﻿namespace Library.Application.Contracts.Dtos;
 
 /// <summary>
 /// Data Transfer Object representing a reader in the library system.
 /// </summary>
-public class ReaderGetDTO
+public class ReaderGetDto
 {
     public int Id { get; set; }
     /// <summary>

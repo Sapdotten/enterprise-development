@@ -1,5 +1,5 @@
-﻿using Library.Application.Contracts.DTOs.AnalyticsDTOs;
-using Library.Application.Contracts.DTOs;
+﻿using Library.Application.Contracts.Dtos.AnalyticsDtos;
+using Library.Application.Contracts.Dtos;
 
 namespace Library.Application.Contracts.Interfaces;
 
@@ -13,7 +13,7 @@ public interface ILibraryAnalyticsService
     /// </summary>
     /// <param name="date">The reference date to evaluate active loans.</param>
     /// <returns>List of books on loan, ordered by title. Returns empty list if none found.</returns>
-    public List<BookGetDTO> GetLoanedBooksOrderedByTitle(DateOnly date);
+    public List<BookGetDto> GetLoanedBooksOrderedByTitle(DateOnly date);
 
     /// <summary>
     /// Retrieves the top readers who borrowed the highest number of books within a given time period.
@@ -23,7 +23,7 @@ public interface ILibraryAnalyticsService
     /// <param name="periodEnd">End date of the analysis period (inclusive).</param>
     /// <param name="resultsCount">Maximum number of top readers to return.</param>
     /// <returns>List of readers with the most loans in the specified period. Limited by resultsCount.</returns>
-    public List<ReaderLoanCountDTO> GetTopReadersByLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount);
+    public List<ReaderLoanCountDto> GetTopReadersByLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount);
 
     /// <summary>
     /// Retrieves readers with the longest single loan duration across their borrowing history.
@@ -32,7 +32,7 @@ public interface ILibraryAnalyticsService
     /// Readers are ranked by full name (ascending).
     /// </summary>
     /// <returns>List of readers ordered by full name.</returns>
-    public List<ReaderLoanDurationDTO> GetTopReadersByLongestLoanTermOrderedByName();
+    public List<ReaderLoanDurationDto> GetTopReadersByLongestLoanTermOrderedByName();
 
     /// <summary>
     /// Retrieves publishers with the highest number of book loans within a specified period.
@@ -42,7 +42,7 @@ public interface ILibraryAnalyticsService
     /// <param name="periodEnd">End date of the analysis period (inclusive).</param>
     /// <param name="resultsCount">Maximum number of top publishers to return.</param>
     /// <returns>List of publishers with the most loaned books in the period. Limited by resultsCount.</returns>
-    public List<PublisherLoanCountDTO> GetTopPublishersByLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount);
+    public List<PublisherLoanCountDto> GetTopPublishersByLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount);
 
     /// <summary>
     /// Retrieves books with the lowest loan counts within a specified period.
@@ -52,5 +52,5 @@ public interface ILibraryAnalyticsService
     /// <param name="periodEnd">End date of the analysis period (inclusive).</param>
     /// <param name="resultsCount">Maximum number of least popular books to return.</param>
     /// <returns>List of books with the fewest loans in the period. Limited by resultsCount.</returns>
-    public List<BookLoanCountDTO> GetBooksByLowestLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount);
+    public List<BookLoanCountDto> GetBooksByLowestLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount);
 }

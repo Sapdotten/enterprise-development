@@ -1,4 +1,4 @@
-﻿using Library.Application.Contracts.DTOs.AnalyticsDTOs;
+﻿using Library.Application.Contracts.Dtos.AnalyticsDtos;
 using Library.Application.Contracts.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -59,10 +59,10 @@ public class AnalyticsController(
     /// 500 if an internal error occurs.
     /// </returns>
     [HttpGet("loaned-books")]
-    [ProducesResponseType(typeof(List<BookLoanCountDTO>), 200)]
+    [ProducesResponseType(typeof(List<BookLoanCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<BookLoanCountDTO>> GetBooksOrderedByTitle()
+    public ActionResult<List<BookLoanCountDto>> GetBooksOrderedByTitle()
     {
         return Logging(nameof(GetBooksOrderedByTitle), () =>
         {
@@ -84,10 +84,10 @@ public class AnalyticsController(
     /// 500 if an internal error occurs.
     /// </returns>
     [HttpGet("top-readers-by-loaned-books-count")]
-    [ProducesResponseType(typeof(List<ReaderLoanCountDTO>), 200)]
+    [ProducesResponseType(typeof(List<ReaderLoanCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<ReaderLoanCountDTO>> GetTopReadersByNumberOfBooks(
+    public ActionResult<List<ReaderLoanCountDto>> GetTopReadersByNumberOfBooks(
         [FromQuery] DateOnly start,
         [FromQuery] DateOnly end,
         [FromQuery] int resultCount = 5)
@@ -109,10 +109,10 @@ public class AnalyticsController(
     /// 500 if an internal error occurs.
     /// </returns>
     [HttpGet("top-readers-by-longest-loan")]
-    [ProducesResponseType(typeof(List<ReaderLoanDurationDTO>), 200)]
+    [ProducesResponseType(typeof(List<ReaderLoanDurationDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<ReaderLoanDurationDTO>> GetTopReadersByTotalLoanDays()
+    public ActionResult<List<ReaderLoanDurationDto>> GetTopReadersByTotalLoanDays()
     {
         return Logging(nameof(GetTopReadersByTotalLoanDays), () =>
         {
@@ -133,10 +133,10 @@ public class AnalyticsController(
     /// 500 if an internal error occurs.
     /// </returns>
     [HttpGet("top-publishers-by-loan-count")]
-    [ProducesResponseType(typeof(List<PublisherLoanCountDTO>), 200)]
+    [ProducesResponseType(typeof(List<PublisherLoanCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<PublisherLoanCountDTO>> GetTopPopularPublishersLastYear(
+    public ActionResult<List<PublisherLoanCountDto>> GetTopPopularPublishersLastYear(
         [FromQuery] DateOnly start,
         [FromQuery] DateOnly end,
         [FromQuery] int resultCount = 5)
@@ -160,10 +160,10 @@ public class AnalyticsController(
     /// 500 if an internal error occurs.
     /// </returns>
     [HttpGet("least-popular-books")]
-    [ProducesResponseType(typeof(List<BookLoanCountDTO>), 200)]
+    [ProducesResponseType(typeof(List<BookLoanCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<BookLoanCountDTO>> GetTopLeastPopularBooksLastYear(
+    public ActionResult<List<BookLoanCountDto>> GetTopLeastPopularBooksLastYear(
         [FromQuery] DateOnly start,
         [FromQuery] DateOnly end,
         [FromQuery] int resultCount = 5)

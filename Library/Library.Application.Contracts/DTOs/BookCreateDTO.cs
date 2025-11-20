@@ -1,11 +1,11 @@
-﻿namespace Library.Application.Contracts.DTOs;
+﻿namespace Library.Application.Contracts.Dtos;
 
 /// <summary>
 /// Data Transfer Object for creating a new book.
 /// Contains all necessary metadata required to register a book, excluding auto-generated fields such as ID.
 /// Designed for use in API requests and service layer operations.
 /// </summary>
-public class BookCreateDTO
+public class BookCreateDto
 {
     /// <summary>
     /// Unique inventory number of the book assigned by the library.

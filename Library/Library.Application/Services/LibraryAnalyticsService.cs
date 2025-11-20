@@ -2,8 +2,8 @@
 using Library.Application.Contracts.Interfaces;
 using Library.Domain.Entities;
 using Library.Domain.Interfaces;
-using Library.Application.Contracts.DTOs.AnalyticsDTOs;
-using Library.Application.Contracts.DTOs;
+using Library.Application.Contracts.Dtos.AnalyticsDtos;
+using Library.Application.Contracts.Dtos;
 
 namespace Library.Application.Services;
 
@@ -23,7 +23,7 @@ public class LibraryAnalyticsService(
     /// </summary>
     /// <param name="date">The reference date to evaluate active loans.</param>
     /// <returns>List of books on loan, mapped to BookGetDTO and sorted by title.</returns>
-    public List<BookGetDTO> GetLoanedBooksOrderedByTitle(DateOnly date)
+    public List<BookGetDto> GetLoanedBooksOrderedByTitle(DateOnly date)
     {
         var loanRecords = loanRecordRepository.ReadAll();
         var books = bookRepository.ReadAll();
@@ -39,7 +39,7 @@ public class LibraryAnalyticsService(
             )
             .OrderBy(b => b.Title)
             .ToList();
-        return mapper.Map<List<BookGetDTO>>(loanedBooks);
+        return mapper.Map<List<BookGetDto>>(loanedBooks);
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public class LibraryAnalyticsService(
     /// <param name="periodEnd">End date of the analysis period (inclusive).</param>
     /// <param name="resultsCount">Maximum number of results to return.</param>
     /// <returns>List of readers with highest loan counts, limited to resultsCount.</returns>
-    public List<ReaderLoanCountDTO> GetTopReadersByLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount)
+    public List<ReaderLoanCountDto> GetTopReadersByLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount)
     {
         var loanRecords = loanRecordRepository.ReadAll();
         var readers = readerRepository.ReadAll();
@@ -63,7 +63,7 @@ public class LibraryAnalyticsService(
                     r => r.Id,
                     (lr, r) =>
                     {
-                        var reader = mapper.Map<ReaderLoanCountDTO>(r);
+                        var reader = mapper.Map<ReaderLoanCountDto>(r);
                         reader.LoanCount = lr.Count();
                         return reader;
                     }
@@ -81,7 +81,7 @@ public class LibraryAnalyticsService(
     /// Results are ordered by full name (last, first, patronymic).
     /// </summary>
     /// <returns>List of readers with the longest loan term, ordered by name.</returns>
-    public List<ReaderLoanDurationDTO> GetTopReadersByLongestLoanTermOrderedByName()
+    public List<ReaderLoanDurationDto> GetTopReadersByLongestLoanTermOrderedByName()
     {
         var loanRecords = loanRecordRepository.ReadAll();
         var readers = readerRepository.ReadAll();
@@ -95,7 +95,7 @@ public class LibraryAnalyticsService(
                     r => r.Id,
                     (lr, r) =>
                     {
-                        var reader = mapper.Map<ReaderLoanDurationDTO>(r);
+                        var reader = mapper.Map<ReaderLoanDurationDto>(r);
                         reader.Duration = lr.Max(r => r.LoanTerm);
                         return reader;
                     }
@@ -113,7 +113,7 @@ public class LibraryAnalyticsService(
     /// <param name="periodEnd">End date of the analysis period (inclusive).</param>
     /// <param name="resultsCount">Maximum number of results to return.</param>
     /// <returns>List of publishers with highest loan counts, limited to resultsCount.</returns>
-    public List<PublisherLoanCountDTO> GetTopPublishersByLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount)
+    public List<PublisherLoanCountDto> GetTopPublishersByLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount)
     {
         var loanRecords = loanRecordRepository.ReadAll();
         var books = bookRepository.ReadAll();
@@ -126,7 +126,7 @@ public class LibraryAnalyticsService(
                     (lr, b) => b.Publisher.ToString()
                 )
                 .GroupBy(p => p)
-                .Select(g => new PublisherLoanCountDTO
+                .Select(g => new PublisherLoanCountDto
                 {
                     PublisherName = g.Key,
                     LoanCount = g.Count()
@@ -146,7 +146,7 @@ public class LibraryAnalyticsService(
     /// <param name="periodEnd">End date of the analysis period (inclusive).</param>
     /// <param name="resultsCount">Maximum number of results to return.</param>
     /// <returns>List of least popular books, limited to resultsCount.</returns>
-    public List<BookLoanCountDTO> GetBooksByLowestLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount)
+    public List<BookLoanCountDto> GetBooksByLowestLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount)
     {
         var loanRecords = loanRecordRepository.ReadAll();
         var books = bookRepository.ReadAll();
@@ -159,7 +159,7 @@ public class LibraryAnalyticsService(
                     r => r.Id,
                     (lr, r) =>
                     {
-                        var book = mapper.Map<BookLoanCountDTO>(r);
+                        var book = mapper.Map<BookLoanCountDto>(r);
                         book.LoanCount = lr.Count();
                         return book;
                     }

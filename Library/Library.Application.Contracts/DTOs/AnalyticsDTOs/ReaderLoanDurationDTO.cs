@@ -1,11 +1,11 @@
-﻿namespace Library.Application.Contracts.DTOs.AnalyticsDTOs;
+﻿namespace Library.Application.Contracts.Dtos.AnalyticsDtos;
 
 /// <summary>
 /// Data transfer object representing a reader with their maximum loan duration.
 /// Contains full reader details and the longest single loan period they have taken.
 /// Used for ranking readers by book holding time in library analytics.
 /// </summary>
-public class ReaderLoanDurationDTO
+public class ReaderLoanDurationDto
 {
     /// <summary>
     /// Unique identifier of the reader.

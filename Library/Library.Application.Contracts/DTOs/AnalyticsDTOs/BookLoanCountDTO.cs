@@ -1,10 +1,10 @@
-﻿namespace Library.Application.Contracts.DTOs.AnalyticsDTOs;
+﻿namespace Library.Application.Contracts.Dtos.AnalyticsDtos;
 
 /// <summary>
 /// Data transfer object representing a book with its loan count.
 /// Contains full book metadata and the total number of times the book has been loaned.
 /// </summary>
-public class BookLoanCountDTO
+public class BookLoanCountDto
 {
     /// <summary>
     /// Unqiue identifier of the book.

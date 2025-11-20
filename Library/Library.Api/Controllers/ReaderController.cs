@@ -1,4 +1,4 @@
-﻿using Library.Application.Contracts.DTOs;
+﻿using Library.Application.Contracts.Dtos;
 using Library.Application.Contracts.Interfaces;
 
 namespace Library.Api.Controllers;
@@ -9,5 +9,5 @@ namespace Library.Api.Controllers;
 /// </summary>
 /// <param name="readerService">Service handling reader-related business logic.</param>
 /// <param name="logger">Logger instance for diagnostics and request tracing.</param>
-public class ReaderController(IApplicationService<ReaderGetDTO, ReaderCreateDTO, int> readerService, ILogger<ReaderController> logger)
-    : CrudControllerBase<ReaderGetDTO, ReaderCreateDTO, int>(readerService, logger);
+public class ReaderController(IApplicationService<ReaderGetDto, ReaderCreateDto, int> readerService, ILogger<ReaderController> logger)
+    : CrudControllerBase<ReaderGetDto, ReaderCreateDto, int>(readerService, logger);

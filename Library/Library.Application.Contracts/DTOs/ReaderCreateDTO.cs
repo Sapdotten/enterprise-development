@@ -1,9 +1,9 @@
-﻿namespace Library.Application.Contracts.DTOs;
+﻿namespace Library.Application.Contracts.Dtos;
 
 /// <summary>
 /// Data Transfer Object for creating a new reader in the library system.
 /// </summary>
-public class ReaderCreateDTO
+public class ReaderCreateDto
 {
     public required string FirstName { get; set; }
 

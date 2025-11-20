@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Library.Application.Contracts.DTOs;
-using Library.Application.Contracts.DTOs.AnalyticsDTOs;
+using Library.Application.Contracts.Dtos;
+using Library.Application.Contracts.Dtos.AnalyticsDtos;
 using Library.Domain.Entities;
 namespace Library.Application;
 
@@ -17,17 +17,17 @@ public class MappingProfile : Profile
     /// </summary>
     public MappingProfile()
     {
-        CreateMap<BookCreateDTO, Book>().ReverseMap();
-        CreateMap<BookGetDTO, Book>().ReverseMap();
+        CreateMap<BookCreateDto, Book>().ReverseMap();
+        CreateMap<BookGetDto, Book>().ReverseMap();
 
-        CreateMap<ReaderCreateDTO, Reader>().ReverseMap();
-        CreateMap<ReaderGetDTO, Reader>().ReverseMap();
+        CreateMap<ReaderCreateDto, Reader>().ReverseMap();
+        CreateMap<ReaderGetDto, Reader>().ReverseMap();
 
-        CreateMap<LoanRecordCreateDTO, LoanRecord>().ReverseMap();
-        CreateMap<LoanRecordGetDTO, LoanRecord>().ReverseMap();
+        CreateMap<LoanRecordCreateDto, LoanRecord>().ReverseMap();
+        CreateMap<LoanRecordGetDto, LoanRecord>().ReverseMap();
 
-        CreateMap<Book, BookLoanCountDTO>().ReverseMap();
-        CreateMap<Reader, ReaderLoanCountDTO>().ReverseMap();
-        CreateMap<Reader, ReaderLoanDurationDTO>().ReverseMap();
+        CreateMap<Book, BookLoanCountDto>().ReverseMap();
+        CreateMap<Reader, ReaderLoanCountDto>().ReverseMap();
+        CreateMap<Reader, ReaderLoanDurationDto>().ReverseMap();
     }
 }

@@ -5,7 +5,7 @@ using Library.Application.Contracts.Interfaces;
 using Library.Domain.Interfaces;
 using Library.Domain.Entities;
 using Library.Infrastructure.Repositories;
-using Library.Application.Contracts.DTOs;
+using Library.Application.Contracts.Dtos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,9 +23,9 @@ builder.Services.AddSingleton<IRepository<Book, int>, BookRepository>();
 builder.Services.AddSingleton<IRepository<Reader, int>, ReaderRepository>();
 builder.Services.AddSingleton<IRepository<LoanRecord, int>, LoanRecordRepository>();
 
-builder.Services.AddScoped<IApplicationService<BookGetDTO, BookCreateDTO, int>, BookService>();
-builder.Services.AddScoped<IApplicationService<ReaderGetDTO, ReaderCreateDTO, int>, ReaderService>();
-builder.Services.AddScoped<IApplicationService<LoanRecordGetDTO, LoanRecordCreateDTO, int>, LoanRecordService>();
+builder.Services.AddScoped<IApplicationService<BookGetDto, BookCreateDto, int>, BookService>();
+builder.Services.AddScoped<IApplicationService<ReaderGetDto, ReaderCreateDto, int>, ReaderService>();
+builder.Services.AddScoped<IApplicationService<LoanRecordGetDto, LoanRecordCreateDto, int>, LoanRecordService>();
 builder.Services.AddScoped<ILibraryAnalyticsService, LibraryAnalyticsService>();
 
 builder.Services.AddSwaggerGen(c =>

@@ -1,4 +1,4 @@
-﻿using Library.Application.Contracts.DTOs;
+﻿using Library.Application.Contracts.Dtos;
 using Library.Application.Contracts.Interfaces;
 
 namespace Library.Api.Controllers;
@@ -9,5 +9,5 @@ namespace Library.Api.Controllers;
 /// </summary>
 /// <param name="bookService">Service handling book operations.</param>
 /// <param name="logger">Logger instance for diagnostics.</param>
-public class BookController(IApplicationService<BookGetDTO, BookCreateDTO, int> bookService, ILogger<BookController> logger)
-    : CrudControllerBase<BookGetDTO, BookCreateDTO, int>(bookService, logger);
+public class BookController(IApplicationService<BookGetDto, BookCreateDto, int> bookService, ILogger<BookController> logger)
+    : CrudControllerBase<BookGetDto, BookCreateDto, int>(bookService, logger);

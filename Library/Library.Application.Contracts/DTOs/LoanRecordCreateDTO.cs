@@ -1,9 +1,9 @@
-﻿namespace Library.Application.Contracts.DTOs;
+﻿namespace Library.Application.Contracts.Dtos;
 
 /// <summary>
 /// Data Transfer Object for creating a new loan record in the library system.
 /// </summary>
-public class LoanRecordCreateDTO
+public class LoanRecordCreateDto
 {
     /// <summary>
     /// Identifier of the borrowed book
