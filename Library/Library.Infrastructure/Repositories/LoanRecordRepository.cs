@@ -30,7 +30,7 @@ public class LoanRecordRepository : IRepository<LoanRecord, int>
     /// <returns>The unique identifier assigned to the created loan record.</returns>
     public int Create(LoanRecord loanRecord)
     {
-        loanRecord.Id = _maxId++;
+        loanRecord.Id = ++_maxId;
         _loanRecords.Add(loanRecord);
         return loanRecord.Id;
     }
