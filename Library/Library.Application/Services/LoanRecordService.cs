@@ -57,6 +57,7 @@ public class LoanRecordService(
     public LoanRecordGetDto Update(LoanRecordCreateDto dto, int dtoId)
     {
         var toUpdateLoanRecord = loanRecordRepository.Read(dtoId) ?? throw new InvalidOperationException($"Loan record with ID {dtoId} was not found for updating");
+        mapper.Map(dto, toUpdateLoanRecord);
         loanRecordRepository.Update(toUpdateLoanRecord);
         return mapper.Map<LoanRecordGetDto>(toUpdateLoanRecord);
     }

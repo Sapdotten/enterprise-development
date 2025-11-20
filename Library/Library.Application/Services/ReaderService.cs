@@ -56,6 +56,7 @@ public class ReaderService(
     public ReaderGetDto Update(ReaderCreateDto reader, int dtoId)
     {
         var toUpdateReader = readerRepository.Read(dtoId) ?? throw new InvalidOperationException($"Reader with ID {dtoId} was not found for updating");
+        mapper.Map(reader, toUpdateReader);
         readerRepository.Update(toUpdateReader);
         return mapper.Map<ReaderGetDto>(toUpdateReader);
     }

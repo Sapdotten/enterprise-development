@@ -57,6 +57,7 @@ public class BookService(
     public BookGetDto Update(BookCreateDto dto, int dtoId)
     {
         var toUpdateBook = bookRepository.Read(dtoId) ?? throw new InvalidOperationException($"Book with ID {dtoId} was not found for updating");
+        mapper.Map(dto, toUpdateBook);
         bookRepository.Update(toUpdateBook);
         return mapper.Map<BookGetDto>(toUpdateBook);
     }
