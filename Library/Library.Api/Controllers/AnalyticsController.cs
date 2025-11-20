@@ -8,25 +8,21 @@ namespace Library.Api.Controllers;
 /// Provides API methods for analytical queries on library data.
 /// </summary>
 /// <param name="analyticsService">The service handling analytics operations.</param>
-/// <param name="logger">Logger instance for request tracing and diagnostics.</param>
 [ApiController]
 [Route("api/analytics")]
 public class AnalyticsController(
-    ILibraryAnalyticsService analyticsService,
-    ILogger<AnalyticsController> logger) : ControllerBase
+    ILibraryAnalyticsService analyticsService) : ControllerBase
 {
 
     /// <summary>
     /// Retrieves a list of all books currently loaned out, ordered alphabetically by title.
     /// </summary>
     /// <returns>
-    /// Returns 200 with a list of BookLoanCountDto if successful; 
-    /// 204 if no loaned books are found; 
+    /// Returns 200 with a list of BookLoanCountDto if successful;
     /// 500 if an internal error occurs.
     /// </returns>
     [HttpGet("loaned-books")]
     [ProducesResponseType(typeof(List<BookLoanCountDto>), 200)]
-    [ProducesResponseType(204)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
     public ActionResult<List<BookLoanCountDto>> GetBooksOrderedByTitle()
@@ -44,12 +40,10 @@ public class AnalyticsController(
     /// <param name="resultCount">Maximum number of results to return. Defaults to 5.</param>
     /// <returns>
     /// Returns 200 with a list of ReaderLoanCountDto if successful;
-    /// 204 if no matching records are found;
     /// 500 if an internal error occurs.
     /// </returns>
     [HttpGet("top-readers-by-loaned-books-count")]
     [ProducesResponseType(typeof(List<ReaderLoanCountDto>), 200)]
-    [ProducesResponseType(204)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
     public ActionResult<List<ReaderLoanCountDto>> GetTopReadersByNumberOfBooks(
@@ -67,18 +61,16 @@ public class AnalyticsController(
     /// </summary>
     /// <returns>
     /// Returns 200 with a list of ReaderLoanDurationDto if data exists;
-    /// 204 if no active loan records are found;
     /// 500 if an internal error occurs.
     /// </returns>
     [HttpGet("top-readers-by-longest-loan")]
     [ProducesResponseType(typeof(List<ReaderLoanDurationDto>), 200)]
-    [ProducesResponseType(204)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
     public ActionResult<List<ReaderLoanDurationDto>> GetTopReadersByTotalLoanDays()
     {
         var result = analyticsService.GetTopReadersByLongestLoanTermOrderedByName();
-        return result.Count > 0 ? Ok(result) : NoContent();
+        return Ok(result);
     }
 
     /// <summary>
@@ -89,12 +81,10 @@ public class AnalyticsController(
     /// <param name="resultCount">Maximum number of results to return. Defaults to 5.</param>
     /// <returns>
     /// Returns 200 with a list of PublisherLoanCountDto if successful;
-    /// 204 if no data is available;
     /// 500 if an internal error occurs.
     /// </returns>
     [HttpGet("top-publishers-by-loan-count")]
     [ProducesResponseType(typeof(List<PublisherLoanCountDto>), 200)]
-    [ProducesResponseType(204)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
     public ActionResult<List<PublisherLoanCountDto>> GetTopPopularPublishersLastYear(
@@ -114,12 +104,10 @@ public class AnalyticsController(
     /// <param name="resultCount">Maximum number of results to return. Defaults to 5.</param>
     /// <returns>
     /// Returns 200 with a list of BookLoanCountDto if successful;
-    /// 204 if no books meet the criteria;
     /// 500 if an internal error occurs.
     /// </returns>
     [HttpGet("least-popular-books")]
     [ProducesResponseType(typeof(List<BookLoanCountDto>), 200)]
-    [ProducesResponseType(204)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
     public ActionResult<List<BookLoanCountDto>> GetTopLeastPopularBooksLastYear(

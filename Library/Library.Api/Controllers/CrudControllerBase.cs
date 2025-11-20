@@ -86,10 +86,9 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     /// Retrieves a single entity by its identifier.
     /// </summary>
     /// <param name="id">Identifier of the entity to retrieve.</param>
-    /// <returns>Entity DTO with 200 status, 204 if not found, or 500 on error.</returns>
+    /// <returns>Entity DTO with 200 status or 500 on error.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(200)]
-    [ProducesResponseType(204)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
     public ActionResult<TGetDto> Get(TKey id)
