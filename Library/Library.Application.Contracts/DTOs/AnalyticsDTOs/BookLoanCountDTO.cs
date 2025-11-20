@@ -44,7 +44,7 @@ public class BookLoanCountDto
     /// <summary>
     /// The year of the book's publication.
     /// </summary>
-    public required string Year { get; set; }
+    public required int Year { get; set; }
 
     /// <summary>
     /// Total number of times this book has been loaned out.

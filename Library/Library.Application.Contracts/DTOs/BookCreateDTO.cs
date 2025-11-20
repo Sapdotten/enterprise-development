@@ -47,5 +47,5 @@ public class BookCreateDto
     /// <summary>
     /// Year when the book was published.
     /// </summary>
-    public required string Year { get; set; }
+    public required int Year { get; set; }
 }
