@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Domain", "Domain\Library.Domain.csproj", "{D661852D-6C7D-4DE5-B44E-8F293E0C2B9C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Domain", "Library.Domain\Library.Domain.csproj", "{D661852D-6C7D-4DE5-B44E-8F293E0C2B9C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Tests", "Tests\Library.Tests.csproj", "{EBA28F48-F921-47D3-9457-EBE8175F599E}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -18,6 +18,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Application", "Library.Application\Library.Application.csproj", "{9CC96AF8-340A-45C3-BF02-BF320692DF10}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9B16B974-9D54-474A-ADA7-7D51FB1A4369} = {9B16B974-9D54-474A-ADA7-7D51FB1A4369}
+		{D661852D-6C7D-4DE5-B44E-8F293E0C2B9C} = {D661852D-6C7D-4DE5-B44E-8F293E0C2B9C}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Application.Contracts", "Library.Application.Contracts\Library.Application.Contracts.csproj", "{9B16B974-9D54-474A-ADA7-7D51FB1A4369}"
