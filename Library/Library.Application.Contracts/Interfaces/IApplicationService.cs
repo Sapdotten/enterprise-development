@@ -41,6 +41,6 @@ public interface IApplicationService<TGetDto, TCreateDto, TKey>
     /// Deletes an entity identified by its unique identifier.
     /// </summary>
     /// <param name="dtoId">The unique identifier of the entity to delete.</param>
-    /// <exception cref="KeyNotFoundException">Thrown if no entity exists with the given identifier.</exception>
-    public void Delete(TKey dtoId);
+    /// <returns>True, if success, False when no book exists with the given ID.</returns>
+    public bool Delete(TKey dtoId);
 }

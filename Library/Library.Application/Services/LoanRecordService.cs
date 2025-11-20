@@ -66,10 +66,9 @@ public class LoanRecordService(
     /// Deletes a loan record identified by its unique ID.
     /// </summary>
     /// <param name="dtoId">The ID of the loan record to delete.</param>
-    /// <exception cref="InvalidOperationException">Thrown when no loan record exists with the given ID.</exception>
-    public void Delete(int dtoId)
+    /// <returns>True, if success, False when no book exists with the given ID.</returns>
+    public bool Delete(int dtoId)
     {
-        if (!loanRecordRepository.Delete(dtoId))
-            throw new InvalidOperationException($"Loan record with ID {dtoId} was not found for deleting");
+        return loanRecordRepository.Delete(dtoId);
     }
 }

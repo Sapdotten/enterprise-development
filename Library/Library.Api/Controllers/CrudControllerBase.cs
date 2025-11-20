@@ -94,23 +94,15 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     /// Deletes an entity by its identifier.
     /// </summary>
     /// <param name="id">Identifier of the entity to delete.</param>
-    /// <returns>200 on success, 404 if not found, or 500 on error.</returns>
+    /// <returns>204 on success.</returns>
     [HttpDelete("{id}")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(500)]
+    [ProducesResponseType(204)]
     public IActionResult Delete(TKey id)
     {
         return Logging(nameof(Delete), () =>
         {
-            try
-            {
-                appService.Delete(id);
-                return Ok();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
+            appService.Delete(id);
+            return NoContent();
         });
     }
 

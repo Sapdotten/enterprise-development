@@ -65,10 +65,9 @@ public class ReaderService(
     /// Deletes a reader identified by its unique ID.
     /// </summary>
     /// <param name="dtoId">The ID of the reader to delete.</param>
-    /// <exception cref="InvalidOperationException">Thrown when no reader exists with the given ID.</exception>
-    public void Delete(int dtoId)
+    /// <returns>True, if success, False when no book exists with the given ID.</returns>
+    public bool Delete(int dtoId)
     {
-        if (!readerRepository.Delete(dtoId))
-            throw new InvalidOperationException($"Reader with ID {dtoId} was not found for deleting");
+        return readerRepository.Delete(dtoId);
     }
 }
