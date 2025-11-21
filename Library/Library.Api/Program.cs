@@ -6,6 +6,7 @@ using Library.Domain.Interfaces;
 using Library.Domain.Entities;
 using Library.Infrastructure.Repositories;
 using Library.Application.Contracts.Dtos;
+using Library.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 

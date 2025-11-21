@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
+namespace Library.Api;
+
 /// <summary>
 /// Action filter that logs execution of controller actions.
 /// Logs entry, successful completion (with item count only if result is a collection), and exceptions.
