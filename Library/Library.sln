@@ -35,6 +35,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.ServiceDefaults", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Infrastructure.InMemory", "Library.Infrastructure.InMemory\Library.Infrastructure.InMemory.csproj", "{F44E543C-B623-444B-8618-ECBAF23E0B05}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Generator.Kafka", "Library.Generator.Kafka\Library.Generator.Kafka.csproj", "{B281946A-E272-4221-8CA8-6A267B80DE8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Infrastructure.Kafka", "Library.Infrastructure.Kafka\Library.Infrastructure.Kafka.csproj", "{2FD31405-FB21-46AC-AB2D-57A501169C1C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +81,14 @@ Global
 		{F44E543C-B623-444B-8618-ECBAF23E0B05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F44E543C-B623-444B-8618-ECBAF23E0B05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F44E543C-B623-444B-8618-ECBAF23E0B05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B281946A-E272-4221-8CA8-6A267B80DE8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B281946A-E272-4221-8CA8-6A267B80DE8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B281946A-E272-4221-8CA8-6A267B80DE8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B281946A-E272-4221-8CA8-6A267B80DE8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FD31405-FB21-46AC-AB2D-57A501169C1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FD31405-FB21-46AC-AB2D-57A501169C1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FD31405-FB21-46AC-AB2D-57A501169C1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FD31405-FB21-46AC-AB2D-57A501169C1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
