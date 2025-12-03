@@ -41,8 +41,8 @@
 - `LoanRecordRepository` - репозиторий для работы с записями о выдаче книг
 - `ReaderRepository` - репозиторий для работы с сущностями читателя
 
-### 2. `Library.Infrastructure.Postgres` - реализация репозиториев для работы с данными, хранящимися в базе данных Postgres
-Все еречисленные в этом проекте репозитории имплементируют интерфейс `IRepository`
+### 3. `Library.Infrastructure.Postgres` - реализация репозиториев для работы с данными, хранящимися в базе данных Postgres
+Все перечисленные в этом проекте репозитории имплементируют интерфейс `IRepository`
 - `BookRepository` - репозиторий для работы с сущностями книги
 - `LoanRecordRepository` - репозиторий для работы с записями о выдаче книг
 - `ReaderRepository` - репозиторий для работы с сущностями читателя
@@ -50,7 +50,7 @@
 - `AppDbContext` - контекст базы данных Postgres
 - `DataInitializer` - реализация инициализации данных в базе
 
-### 3. `library.Tests` - Тесты
+### 4. `library.Tests` - Тесты
 
 #### `LibraryFixture`
 
@@ -73,7 +73,7 @@
 | `GetLeastPopularPublisher`         | Находит топ 5 наименее популярных издательств за последний год.                          |
 
 
-### 4. `Library.Application.Contracts` - описание DTO и интерфейсов
+### 5. `Library.Application.Contracts` - описание DTO и интерфейсов
 #### `DTOs` - описание моделей Data Transfer Object
 | DTO                   | Назначение                                                                                     |
 | --------------------- | ---------------------------------------------------------------------------------------------- |
@@ -93,7 +93,7 @@
 - `ILibraryAnalyticsService` - интерфейс с описанием аналитических запросов
 
 
-### 5. `Library.Application` - сервисный слой
+### 6. `Library.Application` - сервисный слой
 #### `MappingProfile`
 Маппер для трансформации сущностей предметной области в DTO и наоборот, использует **AutoMapper**.
 
@@ -106,7 +106,7 @@
 А `LibraryAnalyticsService` реализует операции для аналитических запросов, имплементирует интерфейс `ILibraryAnalyticsService`.
 
 
-### 6. `Library.Api` - Веб-API
+### 7. `Library.Api` - Веб-API
 Здесь реализованы контроллеры для работы с сервисом:
 - `CrudControllerBase` - базовый контроллер для CRUD-операций над сущностями предметной области
 - `AnalyticsController` - для аналитических запросов
@@ -114,10 +114,30 @@
 - `LoanRecordController` - для работы с записями о выдаче книг, наследуется от `CrudControllerBase`
 - `ReaderController` - для работы с читателями, наследуется от `CrudControllerBase`
 
+
+### 8. `Library.Generator.Kafka` - Генератор тестовых данных для Kafka
+- `Services\IProducserService` - интерфейс для отправки сообщений в Кафку
+- `Services\GeneratorService` - сервис генерации данных
+- `KafkaProducerService` - продюсер Кафки (имплементирует `Services\IProducserService`)
+- `LoanRecordGenerator` - генератор записей о выдаче книг
+- `Serilizers\KeySerializer` - сериализатор ключей для сообщений Кафки
+- `Serilizers\ValueSerializer` - сериализатор значений для сообщений Кафки
+
+### 9. `Library.Infrastructure.Kafka` - Подписчик на данные Kafka
+- `KafkaConsumer` - консьюмер Кафки
+- `LoanRecordGenerator` - генератор записей о выдаче книг
+- `Deserilizers\KeyDeserializer` - десериализатор ключей для сообщений Кафки
+- `Deserilizers\ValueDeserializer` - десериализатор значений для сообщений Кафки
+
 ## Результат
-Хранение данных успешно перенесено с in-memory коллекций на PostgreSQL. Все CRUD-операции и аналитические запросы продолжают работать корректно.
-Реализованы миграции и настроена автоматическая инициализация БД.
-Aspire обеспечивает стабильный запуск всей системы в виде единого оркестрированного приложения.
+Добавлены два новых проекта:  
+
+- `Library.Generator.Kafka` — генератор нагрузки, реализующий продюсер Kafka для отправки пакетов DTO выдачи книг;  
+- `Library.Infrastructure.Kafka` — консьюмер, принимающий сообщения из Kafka и передающий их на обработку.
+
+Оба проекта интегрированы в `AppHost` и управляются через Aspire. В каждом реализована необходимая регистрация зависимостей через DI, включая десериализаторы, политики повторных попыток (Polly) и фоновые службы.
+
+Для обработки входящих контрактов интерфейс ILoanRecordService был расширен методом ReceiveContractAsync, а LoanRecordService — дополнен его реализацией. 
 
 ```
 ⣿⣿⣿⠟⠛⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⢋⣩⣉⢻⣿⣿
