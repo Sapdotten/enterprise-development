@@ -3,6 +3,7 @@ using Library.Application.Contracts.Dtos;
 using Library.Application.Contracts.Interfaces;
 using Library.Domain.Interfaces;
 using Library.Domain.Entities;
+using System.Reflection.Metadata;
 
 namespace Library.Application.Services;
 
@@ -10,8 +11,8 @@ namespace Library.Application.Services;
 /// Application service for managing loan record operations.
 /// </summary>
 public class LoanRecordService(
-    IRepository<LoanRecord, int> loanRecordRepository, IMapper mapper
-    ) : IApplicationService<LoanRecordGetDto, LoanRecordCreateDto, int>
+    IRepository<LoanRecord, int> loanRecordRepository, IMapper mapper, IRepository<Book, int> bookRepository, IRepository<Reader, int> readerRepository
+    ) : ILoanRecordService
 {
     /// <summary>
     /// Creates a new loan record from the provided DTO.
@@ -71,4 +72,31 @@ public class LoanRecordService(
     {
         return loanRecordRepository.Delete(dtoId);
     }
+
+    /// <summary>
+    /// Asynchronously processes a batch of loan record contracts.
+    /// Validates the existence of associated books and readers, maps each DTO to an entity,
+    /// and persists the records in the data store. Throws if any referenced entity is missing.
+    /// </summary>
+    /// <param name="dtos">List of LoanRecordCreateDto to process. Must not be null.</param>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when a referenced book or reader does not exist.</exception>
+    public async Task ReceiveContractAsync(IList<LoanRecordCreateDto> dtos)
+    {
+        foreach (var dto in dtos)
+        {
+            var book = bookRepository.Read(dto.BookId)
+                ?? throw new InvalidOperationException($"Книга с ID {dto.BookId} не найдена.");
+
+            var reader = readerRepository.Read(dto.ReaderId)
+                ?? throw new InvalidOperationException($"Читатель с ID {dto.ReaderId} не найден.");
+
+            var loanRecord = mapper.Map<LoanRecord>(dto);
+            loanRecord.BookId = book.Id;
+            loanRecord.ReaderId = reader.Id;
+
+            loanRecordRepository.Create(loanRecord);
+        }
+    }
+
 }
