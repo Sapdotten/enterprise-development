@@ -2,6 +2,8 @@
 using Library.Application.Contracts.Dtos;
 using Library.Application.Contracts.Dtos.AnalyticsDtos;
 using Library.Domain.Entities;
+using Library.Domain.Enums;
+
 namespace Library.Application;
 
 /// <summary>
@@ -17,7 +19,27 @@ public class MappingProfile : Profile
     /// </summary>
     public MappingProfile()
     {
-        CreateMap<BookCreateDto, Book>().ReverseMap();
+        CreateMap<BookCreateDto, Book>()
+            .BeforeMap((dto, _, _) =>
+            {
+                if (!Enum.IsDefined(typeof(PublisherType), dto.PublisherType))
+                {
+                    var values = string.Join(", ", Enum.GetValues<PublisherType>());
+                    throw new ArgumentException(
+                        $"Invalid PublisherType '{dto.PublisherType}'. " +
+                        $"Allowed values: {values}.");
+                }
+
+                if (!Enum.IsDefined(typeof(Publisher), dto.Publisher))
+                {
+                    var values = string.Join(", ", Enum.GetValues<Publisher>());
+                    throw new ArgumentException(
+                        $"Invalid Publisher '{dto.Publisher}'. " +
+                        $"Allowed values: {values}.");
+                }
+            })
+            .ReverseMap();
+
         CreateMap<BookGetDto, Book>().ReverseMap();
 
         CreateMap<ReaderCreateDto, Reader>().ReverseMap();
