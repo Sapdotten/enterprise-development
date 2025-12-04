@@ -93,10 +93,10 @@ public class LoanRecordService(
         foreach (var dto in dtos)
         {
             var book = await bookRepository.ReadAsync(dto.BookId)
-                ?? throw new InvalidOperationException($"Книга с ID {dto.BookId} не найдена.");
+                ?? throw new InvalidOperationException($"Book with ID {dto.BookId} not found.");
 
             var reader = await readerRepository.ReadAsync(dto.ReaderId)
-                ?? throw new InvalidOperationException($"Читатель с ID {dto.ReaderId} не найден.");
+                ?? throw new InvalidOperationException($"Reader with ID {dto.ReaderId} not found.");
 
             var loanRecord = mapper.Map<LoanRecord>(dto);
             loanRecord.BookId = book.Id;
