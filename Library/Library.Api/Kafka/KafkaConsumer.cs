@@ -1,10 +1,10 @@
 ﻿using Confluent.Kafka;
 using Library.Application.Contracts.Dtos;
 using Library.Application.Contracts.Interfaces;
-using Library.Infrastructure.Kafka.Deserializers;
+using Library.Api.Kafka.Deserializers;
 using Microsoft.Extensions.Options;
 
-namespace Library.Infrastructure.Kafka;
+namespace Library.Api.Kafka;
 
 /// <summary>
 /// Options for Kafka consumer configuration.

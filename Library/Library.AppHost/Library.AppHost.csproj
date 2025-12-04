@@ -21,7 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Library.Api\Library.Api.csproj" />
     <ProjectReference Include="..\Library.Generator.Kafka\Library.Generator.Kafka.csproj" />
-    <ProjectReference Include="..\Library.Infrastructure.Kafka\Library.Infrastructure.Kafka.csproj" />
     <ProjectReference Include="..\Library.Infrastructure.Postgres\Library.Infrastructure.Postgres.csproj" />
   </ItemGroup>
 

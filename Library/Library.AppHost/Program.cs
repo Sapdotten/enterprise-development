@@ -5,11 +5,10 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 var postgres = builder.AddPostgres("postgres").AddDatabase("librarydb");
 
-var api = builder.AddProject<Projects.Library_Api>("library-api")
-    .WithReference(postgres, "DefaultConnection")
-    .WaitFor(postgres);
+
 var kafka = builder.AddKafka("library-kafka")
     .WithKafkaUI();
+
 
 var kafkaSettings = builder.Configuration.GetSection("Kafka");
 var bootstrapServers = builder.Configuration.GetConnectionString("library-kafka");
@@ -30,17 +29,16 @@ var producer = builder.AddProject<Projects.Library_Generator_Kafka>("generator")
     .WithEnvironment("Generator:PayloadLimit", payloadLimit.ToString())
     .WithEnvironment("Generator:WaitTime", waitTime.ToString());
 
-builder.AddProject<Projects.Library_Infrastructure_Kafka>("consumer")
+var api = builder.AddProject<Projects.Library_Api>("library-api")
     .WithReference(kafka)
     .WithReference(postgres, "DefaultConnection")
     .WaitFor(kafka)
     .WaitFor(producer)
     .WithEnvironment("Kafka:GroupId", groupId)
     .WithEnvironment("Kafka:BootstrapServers", bootstrapServers)
-    .WithEnvironment("Kafka:Topic", topic);
+    .WithEnvironment("Kafka:Topic", topic)
+    .WithReference(postgres, "DefaultConnection")
+    .WaitFor(postgres);
 
-//builder.AddProject<Projects.Library_Generator_Kafka>("library-generator-kafka");
-
-//builder.AddProject<Projects.Library_Infrastructure_Kafka>("library-infrastructure-kafka");
 
 builder.Build().Run();

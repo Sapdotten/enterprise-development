@@ -7,8 +7,10 @@ using Library.Domain.Interfaces;
 using Library.Domain.Entities;
 using Library.Application.Contracts.Dtos;
 using Library.Api;
+using Library.Api.Kafka;
 using Library.Infrastructure.Postgres;
 using Library.Infrastructure.Postgres.Repositories;
+using Library.Api.Kafka.Deserializers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +49,13 @@ builder.Services.AddSwaggerGen(c =>
     var contractsXmlPath = Path.Combine(AppContext.BaseDirectory, contractsXmlFile);
     c.IncludeXmlComments(contractsXmlPath);
 });
+
+builder.Services.AddSingleton<KeyDeserializer>();
+builder.Services.AddSingleton<ValueDeserializer>();
+builder.Services.Configure<KafkaConsumerOptions>(builder.Configuration.GetSection("Kafka"));
+builder.Services.AddScoped<ILoanRecordService, LoanRecordService>();
+
+builder.Services.AddHostedService<KafkaConsumer>();
 
 var app = builder.Build();
 
