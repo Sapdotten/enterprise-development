@@ -16,6 +16,7 @@ builder.AddKafkaProducer<Guid, IList<LoanRecordCreateDto>>("library-kafka",
 
 builder.Services.AddSingleton<IProducerService, GeneratorService>();
 builder.Services.AddHostedService<KafkaProducerService>();
+builder.Services.Configure<GeneratorOptions>(builder.Configuration.GetSection("Generator"));
 
 var host = builder.Build();
 host.Run();

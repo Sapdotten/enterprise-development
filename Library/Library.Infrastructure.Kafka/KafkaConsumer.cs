@@ -2,8 +2,25 @@
 using Library.Application.Contracts.Dtos;
 using Library.Application.Contracts.Interfaces;
 using Library.Infrastructure.Kafka.Deserializers;
+using Microsoft.Extensions.Options;
 
 namespace Library.Infrastructure.Kafka;
+
+/// <summary>
+/// Options for Kafka consumer configuration.
+/// </summary>
+public class KafkaConsumerOptions
+{
+    /// <summary>
+    /// Kafka topic name to consume from.
+    /// </summary>
+    public string? Topic { get; set; }
+
+    /// <summary>
+    /// Consumer group ID.
+    /// </summary>
+    public string? GroupId { get; set; }
+}
 
 /// <summary>
 /// Background service that consumes book loan record batches from a Kafka topic.
@@ -14,17 +31,20 @@ public class KafkaConsumer : BackgroundService
     private readonly IConsumer<Guid, IList<LoanRecordCreateDto>> _consumer;
     private readonly ILogger<KafkaConsumer> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly string _bootstrapServers;
 
     /// <summary>
     /// Initializes a new instance of the KafkaConsumer class.
-    /// Configures Kafka consumer with settings from configuration and subscribes to the specified topic.
+    /// Configures Kafka consumer with settings from IOptions and subscribes to the specified topic.
     /// </summary>
-    /// <param name="configuration">Application configuration containing Kafka settings.</param>
+    /// <param name="options">Kafka consumer options.</param>
+    /// <param name="configuration">Application configuration for connection strings.</param>
     /// <param name="logger">Logger instance for diagnostics.</param>
     /// <param name="keyDeserializer">Custom deserializer for message keys (Guid).</param>
     /// <param name="valueDeserializer">Custom deserializer for message values (List of LoanRecordCreateDto).</param>
     /// <param name="scopeFactory">Factory for creating service scopes to resolve scoped services like ILoanRecordService.</param>
     public KafkaConsumer(
+        IOptions<KafkaConsumerOptions> options,
         IConfiguration configuration,
         ILogger<KafkaConsumer> logger,
         KeyDeserializer keyDeserializer,
@@ -34,21 +54,20 @@ public class KafkaConsumer : BackgroundService
         _logger = logger;
         _scopeFactory = scopeFactory;
 
-        var kafkaConfig = configuration.GetSection("Kafka");
+        var kafkaOptions = options.Value;
 
-        var topicName = kafkaConfig["Topic"]
-            ?? throw new KeyNotFoundException("Topic is missing");
+        if (string.IsNullOrEmpty(kafkaOptions.Topic))
+            throw new ArgumentException("Kafka:Topic is required.");
+        if (string.IsNullOrEmpty(kafkaOptions.GroupId))
+            throw new ArgumentException("Kafka:GroupId is required.");
 
-        var bootstrapServers = configuration.GetConnectionString("library-kafka")
+        _bootstrapServers = configuration.GetConnectionString("library-kafka")
             ?? throw new KeyNotFoundException("ConnectionString 'library-kafka' is missing");
-
-        var groupId = kafkaConfig["GroupId"]
-            ?? throw new KeyNotFoundException("GroupId is missing");
 
         var consumerConfig = new ConsumerConfig
         {
-            BootstrapServers = bootstrapServers,
-            GroupId = groupId,
+            BootstrapServers = _bootstrapServers,
+            GroupId = kafkaOptions.GroupId,
             AutoOffsetReset = AutoOffsetReset.Earliest,
             EnableAutoCommit = true,
             AllowAutoCreateTopics = true
@@ -60,8 +79,8 @@ public class KafkaConsumer : BackgroundService
             .SetErrorHandler((_, e) => _logger.LogError("Kafka Error: {Reason}", e.Reason))
             .Build();
 
-        _consumer.Subscribe(topicName);
-        _logger.LogInformation("Subscribed to Kafka topic: {Topic}", topicName);
+        _consumer.Subscribe(kafkaOptions.Topic);
+        _logger.LogInformation("Subscribed to Kafka topic: {Topic}", kafkaOptions.Topic);
     }
 
     /// <summary>

@@ -32,6 +32,7 @@ builder.Services.AddScoped<IRepository<Reader, int>, ReaderRepository>();
 builder.Services.AddScoped<IRepository<LoanRecord, int>, LoanRecordRepository>();
 
 builder.Services.AddScoped<ILoanRecordService, LoanRecordService>();
+builder.Services.Configure<KafkaConsumerOptions>(builder.Configuration.GetSection("Kafka"));
 
 
 var host = builder.Build();
