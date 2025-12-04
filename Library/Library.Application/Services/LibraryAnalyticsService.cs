@@ -108,7 +108,7 @@ public class LibraryAnalyticsService(
                     return reader;
                 }
             )
-            .OrderBy(r => $"{r.LastName} {r.FirstName} {r.PatronymicName}")
+            .OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ThenBy(r => r.PatronymicName)
             .ToList();
 
         return topReaders;
