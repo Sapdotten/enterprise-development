@@ -5,6 +5,9 @@
 /// </summary>
 public class ReaderCreateDto
 {
+    /// <summary>
+    /// First name of the reader. Must not be null or empty.
+    /// </summary>
     public required string FirstName { get; set; }
 
     /// <summary>

@@ -5,7 +5,11 @@
 /// </summary>
 public class ReaderGetDto
 {
+    /// <summary>
+    /// Unique identifier of the reader.
+    /// </summary>
     public int Id { get; set; }
+
     /// <summary>
     /// First Name of reader
     /// </summary>
