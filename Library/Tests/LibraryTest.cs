@@ -1,14 +1,12 @@
 ﻿using Library.Domain.Enums;
+using System.Threading.Tasks;
 
 namespace Library.Tests;
 
 public class LibraryTest(LibraryFixture fixture) : IClassFixture<LibraryFixture>
 {
-    /// <summary>
-    /// Gets the list of borrowed books, ordered alphabetically by title.
-    /// </summary>
     [Fact]
-    public void GetBorrowedBooks()
+    public async Task GetBorrowedBooks()
     {
         var expected = new[]
         {
@@ -22,8 +20,8 @@ public class LibraryTest(LibraryFixture fixture) : IClassFixture<LibraryFixture>
             "Трансгуманизм Inc.",
             "Чапаев и Пустота"
         };
-        var loanRecords = fixture.LoanRecords.ReadAll();
-        var books = fixture.Books.ReadAll();
+        var loanRecords = await fixture.LoanRecords.ReadAllAsync();
+        var books = await fixture.Books.ReadAllAsync();
 
         var actual = loanRecords
             .Join(
@@ -39,11 +37,8 @@ public class LibraryTest(LibraryFixture fixture) : IClassFixture<LibraryFixture>
         Assert.Equal(expected, actual);
     }
 
-    /// <summary>
-    /// Gets the top 5 most active readers who borrowed the highest number of books during a certain period 
-    /// </summary>
     [Fact]
-    public void GetMostActiveReadersDuringPeriod()
+    public async Task GetMostActiveReadersDuringPeriod()
     {
         var expected = new[]
         {
@@ -55,8 +50,8 @@ public class LibraryTest(LibraryFixture fixture) : IClassFixture<LibraryFixture>
         };
         var startDate = new DateOnly(2025, 1, 1);
         var endDate = new DateOnly(2025, 3, 25);
-        var loanRecords = fixture.LoanRecords.ReadAll();
-        var readers = fixture.Readers.ReadAll();
+        var loanRecords = await fixture.LoanRecords.ReadAllAsync();
+        var readers = await fixture.Readers.ReadAllAsync();
 
         var actual = loanRecords
             .Where(lr => lr.IssueDate >= startDate && lr.IssueDate <= endDate)
@@ -79,22 +74,21 @@ public class LibraryTest(LibraryFixture fixture) : IClassFixture<LibraryFixture>
         Assert.Equal(expected, actual);
     }
 
-    /// <summary>
-    /// Gets readers who borrowed books for the longest loan period, ordered by full name (second name, first name, last name).
-    /// </summary>
     [Fact]
-    public void GetReadersWithLongestLoan()
+    public async Task GetReadersWithLongestLoan()
     {
         var expected = new[]
         {
             "Алехин Иван Игоревич",
             "Волков Александр Юрьевич"
         };
-        var loanRecords = fixture.LoanRecords.ReadAll();
-        var readers = fixture.Readers.ReadAll();
+        var loanRecords = await fixture.LoanRecords.ReadAllAsync();
+        var readers = await fixture.Readers.ReadAllAsync();
+
+        var maxTerm = loanRecords.Max(lr => lr.LoanTerm);
 
         var actual = loanRecords
-            .Where(x => x.LoanTerm == loanRecords.Max(lr => lr.LoanTerm))
+            .Where(x => x.LoanTerm == maxTerm)
             .Join(
                 readers,
                 lr => lr.ReaderId,
@@ -114,11 +108,8 @@ public class LibraryTest(LibraryFixture fixture) : IClassFixture<LibraryFixture>
         Assert.Equal(expected, actual);
     }
 
-    /// <summary>
-    /// Gets the top 5 most popular publishers over the last year, based on the number of book loans.
-    /// </summary>
     [Fact]
-    public void GetMostPopularPublisher()
+    public async Task GetMostPopularPublisher()
     {
         var expected = new[]
         {
@@ -130,8 +121,8 @@ public class LibraryTest(LibraryFixture fixture) : IClassFixture<LibraryFixture>
         };
         var startDate = new DateOnly(2024, 10, 5);
         var endDate = new DateOnly(2025, 10, 5);
-        var loanRecords = fixture.LoanRecords.ReadAll();
-        var books = fixture.Books.ReadAll();
+        var loanRecords = await fixture.LoanRecords.ReadAllAsync();
+        var books = await fixture.Books.ReadAllAsync();
 
         var actual = loanRecords
             .Where(lr => lr.IssueDate >= startDate && lr.IssueDate <= endDate)
@@ -156,43 +147,33 @@ public class LibraryTest(LibraryFixture fixture) : IClassFixture<LibraryFixture>
         Assert.Equal(expected, actual);
     }
 
-    /// <summary>
-    /// Gets the top 5 least popular books over the last year, including those with zero loans, ordered by loan count and then by title.
-    /// </summary>
     [Fact]
-    public void GetLeastPopularBooks()
+    public async Task GetLeastPopularBooks()
     {
         var expected = new[]
         {
+            "Библия Сатаны",
+            "Молот ведьм",
             "1Q84",
             "Ампир V",
-            "Архитектура компьютера",
-            "Игра престолов",
-            "Пикник на обочине"
+            "Архитектура компьютера"
         };
         var startDate = new DateOnly(2024, 10, 5);
         var endDate = new DateOnly(2025, 10, 5);
-        var loanRecords = fixture.LoanRecords.ReadAll();
-        var books = fixture.Books.ReadAll();
+        var loanRecords = await fixture.LoanRecords.ReadAllAsync();
+        var books = await fixture.Books.ReadAllAsync();
 
-        var actual = loanRecords
+        var loanCounts = loanRecords
             .GroupBy(lr => lr.BookId)
-            .Select(g => new
-            {
-                book_id = g.Key,
-                count = g.Count()
+            .ToDictionary(g => g.Key, g => g.Count());
 
-            })
-            .Join(
-            books,
-            g => g.book_id,
-            b => b.Id,
-            (g, b) => new
+        var actual = books
+            .Select(b => new
             {
                 b.Title,
-                g.count
+                Count = loanCounts.TryGetValue(b.Id, out var count) ? count : 0
             })
-            .OrderBy(x => x.count)
+            .OrderBy(x => x.Count)
             .ThenBy(x => x.Title)
             .Take(5)
             .Select(x => x.Title)

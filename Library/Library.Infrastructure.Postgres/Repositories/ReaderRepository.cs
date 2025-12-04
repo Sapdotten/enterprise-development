@@ -1,34 +1,24 @@
 ﻿using Library.Domain.Interfaces;
 using Library.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Library.Infrastructure.Postgres.Repositories;
 
 /// <summary>
-/// In-memory implementation of IRepository for Reader entities.
-/// Initializes with seed data and manages unique IDs via an incrementing counter.
+/// Asynchronous repository implementation for Reader entities using Entity Framework Core.
 /// </summary>
 public class ReaderRepository(AppDbContext dbContext) : IRepository<Reader, int>
 {
-    /// <summary>
-    /// Creates a new reader with a unique identifier.
-    /// </summary>
-    /// <param name="reader">The reader instance to create. Must not be null.</param>
-    /// <returns>The unique identifier assigned to the created reader.</returns>
-    public int Create(Reader reader)
+    public async Task<int> CreateAsync(Reader reader)
     {
-        var entry = dbContext.Readers.Add(reader);
-        dbContext.SaveChanges();
+        var entry = await dbContext.Readers.AddAsync(reader);
+        await dbContext.SaveChangesAsync();
         return entry.Entity.Id;
     }
 
-    /// <summary>
-    /// Updates an existing reader with new property values.
-    /// </summary>
-    /// <param name="reader">The reader instance with updated values. Must not be null.</param>
-    /// <returns>The updated reader if found; otherwise, null.</returns>
-    public Reader? Update(Reader reader)
+    public async Task<Reader?> UpdateAsync(Reader reader)
     {
-        var toUpdateReader = Read(reader.Id);
+        var toUpdateReader = await ReadAsync(reader.Id);
         if (toUpdateReader == null) return null;
 
         toUpdateReader.FirstName = reader.FirstName;
@@ -38,41 +28,27 @@ public class ReaderRepository(AppDbContext dbContext) : IRepository<Reader, int>
         toUpdateReader.PhoneNumber = reader.PhoneNumber;
         toUpdateReader.RegistrationDate = reader.RegistrationDate;
 
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
 
         return toUpdateReader;
     }
 
-    /// <summary>
-    /// Deletes a reader by its unique identifier.
-    /// </summary>
-    /// <param name="id">The unique identifier of the reader to delete.</param>
-    /// <returns>True if the reader was found and deleted; otherwise, false.</returns>
-    public bool Delete(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var toDeleteReader = Read(id);
+        var toDeleteReader = await ReadAsync(id);
         if (toDeleteReader == null) return false;
         dbContext.Remove(toDeleteReader);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
         return true;
     }
 
-    /// <summary>
-    /// Retrieves all readers currently stored in the repository.
-    /// </summary>
-    /// <returns>A list of all readers. Returns a copy of the internal collection.</returns>
-    public List<Reader> ReadAll()
+    public async Task<List<Reader>> ReadAllAsync()
     {
-        return [.. dbContext.Readers];
+        return await dbContext.Readers.ToListAsync();
     }
 
-    /// <summary>
-    /// Retrieves a single reader by its unique identifier.
-    /// </summary>
-    /// <param name="id">The unique identifier of the reader to retrieve.</param>
-    /// <returns>The reader if found; otherwise, null.</returns>
-    public Reader? Read(int id)
+    public async Task<Reader?> ReadAsync(int id)
     {
-        return dbContext.Readers.FirstOrDefault(s => s.Id == id);
+        return await dbContext.Readers.FirstOrDefaultAsync(s => s.Id == id);
     }
 }

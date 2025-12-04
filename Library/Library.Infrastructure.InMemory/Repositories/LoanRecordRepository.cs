@@ -2,7 +2,7 @@
 using Library.Domain.Entities;
 using Library.Domain.Data;
 
-namespace Library.Infrastructure.Repositories;
+namespace Library.Infrastructure.InMemory.Repositories;
 
 /// <summary>
 /// In-memory implementation of IRepository for LoanRecord entities.
@@ -28,11 +28,11 @@ public class LoanRecordRepository : IRepository<LoanRecord, int>
     /// </summary>
     /// <param name="loanRecord">The loan record to create. Must not be null.</param>
     /// <returns>The unique identifier assigned to the created loan record.</returns>
-    public int Create(LoanRecord loanRecord)
+    public Task<int> CreateAsync(LoanRecord loanRecord)
     {
         loanRecord.Id = ++_maxId;
         _loanRecords.Add(loanRecord);
-        return loanRecord.Id;
+        return Task.FromResult(loanRecord.Id);
     }
 
     /// <summary>
@@ -40,39 +40,40 @@ public class LoanRecordRepository : IRepository<LoanRecord, int>
     /// </summary>
     /// <param name="loanRecord">The loan record with updated values. Must not be null.</param>
     /// <returns>The updated loan record if found; otherwise, null.</returns>
-    public LoanRecord? Update(LoanRecord loanRecord)
+    public Task<LoanRecord?> UpdateAsync(LoanRecord loanRecord)
     {
-        var toUpdateLoanRecord = Read(loanRecord.Id);
-        if (toUpdateLoanRecord == null) return null;
+        var toUpdate = _loanRecords.FirstOrDefault(r => r.Id == loanRecord.Id);
+        if (toUpdate == null) return Task.FromResult<LoanRecord?>(null);
 
-        toUpdateLoanRecord.BookId = loanRecord.BookId;
-        toUpdateLoanRecord.ReaderId = loanRecord.ReaderId;
-        toUpdateLoanRecord.IssueDate = loanRecord.IssueDate;
-        toUpdateLoanRecord.LoanTerm = loanRecord.LoanTerm;
+        toUpdate.BookId = loanRecord.BookId;
+        toUpdate.ReaderId = loanRecord.ReaderId;
+        toUpdate.IssueDate = loanRecord.IssueDate;
+        toUpdate.LoanTerm = loanRecord.LoanTerm;
 
-        return toUpdateLoanRecord;
+        return Task.FromResult<LoanRecord?>(toUpdate);
     }
 
     /// <summary>
     /// Deletes a loan record by its unique identifier.
     /// </summary>
-    /// <param name="Id">The unique identifier of the loan record to delete.</param>
+    /// <param name="id">The unique identifier of the loan record to delete.</param>
     /// <returns>True if the record was found and removed; otherwise, false.</returns>
-    public bool Delete(int Id)
+    public Task<bool> DeleteAsync(int id)
     {
-        var toDeleteLoanRecord = Read(Id);
-        if (toDeleteLoanRecord == null) return false;
+        var toDelete = _loanRecords.FirstOrDefault(r => r.Id == id);
+        if (toDelete == null) return Task.FromResult(false);
 
-        return _loanRecords.Remove(toDeleteLoanRecord);
+        var result = _loanRecords.Remove(toDelete);
+        return Task.FromResult(result);
     }
 
     /// <summary>
     /// Retrieves all loan records currently stored in the repository.
     /// </summary>
     /// <returns>A list of all loan records. Returns a copy of the internal collection.</returns>
-    public List<LoanRecord> ReadAll()
+    public Task<List<LoanRecord>> ReadAllAsync()
     {
-        return [.. _loanRecords];
+        return Task.FromResult<List<LoanRecord>>([.. _loanRecords]);
     }
 
     /// <summary>
@@ -80,8 +81,9 @@ public class LoanRecordRepository : IRepository<LoanRecord, int>
     /// </summary>
     /// <param name="id">The unique identifier of the loan record to retrieve.</param>
     /// <returns>The loan record if found; otherwise, null.</returns>
-    public LoanRecord? Read(int id)
+    public Task<LoanRecord?> ReadAsync(int id)
     {
-        return _loanRecords.FirstOrDefault(r => r.Id == id);
+        var record = _loanRecords.FirstOrDefault(r => r.Id == id);
+        return Task.FromResult(record);
     }
 }

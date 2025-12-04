@@ -1,34 +1,24 @@
 ﻿using Library.Domain.Interfaces;
 using Library.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Library.Infrastructure.Postgres.Repositories;
 
 /// <summary>
-/// In-memory implementation of IRepository for Book entities.
-/// Uses SeedData to initialize with predefined data and manages identity via incrementing ID counter.
+/// Asynchronous repository implementation for Book entities using Entity Framework Core.
 /// </summary>
 public class BookRepository(AppDbContext dbContext) : IRepository<Book, int>
 {
-    /// <summary>
-    /// Creates a new book with a unique identifier.
-    /// </summary>
-    /// <param name="book">The book instance to create. Must not be null.</param>
-    /// <returns>The unique identifier assigned to the created book.</returns>
-    public int Create(Book book)
+    public async Task<int> CreateAsync(Book book)
     {
-        var entry = dbContext.Books.Add(book);
-        dbContext.SaveChanges();
+        var entry = await dbContext.Books.AddAsync(book);
+        await dbContext.SaveChangesAsync();
         return entry.Entity.Id;
     }
 
-    /// <summary>
-    /// Updates an existing book with new property values.
-    /// </summary>
-    /// <param name="book">The book instance with updated values. Must not be null.</param>
-    /// <returns>The updated book if found; otherwise, null.</returns>
-    public Book? Update(Book book)
+    public async Task<Book?> UpdateAsync(Book book)
     {
-        var toUpdateBook = Read(book.Id);
+        var toUpdateBook = await ReadAsync(book.Id);
         if (toUpdateBook == null) return null;
 
         toUpdateBook.InventoryNumber = book.InventoryNumber;
@@ -38,41 +28,27 @@ public class BookRepository(AppDbContext dbContext) : IRepository<Book, int>
         toUpdateBook.PublisherType = book.PublisherType;
         toUpdateBook.Publisher = book.Publisher;
 
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
 
         return toUpdateBook;
     }
 
-    /// <summary>
-    /// Deletes a book by its unique identifier.
-    /// </summary>
-    /// <param name="id">The unique identifier of the book to delete.</param>
-    /// <returns>True if the book was found and deleted; otherwise, false.</returns>
-    public bool Delete(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var toDeleteBook = Read(id);
+        var toDeleteBook = await ReadAsync(id);
         if (toDeleteBook == null) return false;
         dbContext.Remove(toDeleteBook);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
         return true;
     }
 
-    /// <summary>
-    /// Retrieves all books currently stored in the repository.
-    /// </summary>
-    /// <returns>A list of all books. Returns a copy of the internal collection.</returns>
-    public List<Book> ReadAll()
+    public async Task<List<Book>> ReadAllAsync()
     {
-        return [.. dbContext.Books];
+        return await dbContext.Books.ToListAsync();
     }
 
-    /// <summary>
-    /// Retrieves a single book by its unique identifier.
-    /// </summary>
-    /// <param name="id">The unique identifier of the book to retrieve.</param>
-    /// <returns>The book if found; otherwise, null.</returns>
-    public Book? Read(int id)
+    public async Task<Book?> ReadAsync(int id)
     {
-        return dbContext.Books.FirstOrDefault(a => a.Id == id);
+        return await dbContext.Books.FirstOrDefaultAsync(a => a.Id == id);
     }
 }

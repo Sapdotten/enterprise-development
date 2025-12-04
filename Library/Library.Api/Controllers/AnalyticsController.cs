@@ -5,15 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace Library.Api.Controllers;
 
 /// <summary>
-/// Provides API methods for analytical queries on library data.
+/// Provides asynchronous API methods for analytical queries on library data.
 /// </summary>
 /// <param name="analyticsService">The service handling analytics operations.</param>
 [ApiController]
 [Route("api/analytics")]
-public class AnalyticsController(
-    ILibraryAnalyticsService analyticsService) : ControllerBase
+public class AnalyticsController(ILibraryAnalyticsService analyticsService) : ControllerBase
 {
-
     /// <summary>
     /// Retrieves a list of all books currently loaned out, ordered alphabetically by title.
     /// </summary>
@@ -25,10 +23,10 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<BookLoanCountDto>), 200)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
-    public ActionResult<List<BookLoanCountDto>> GetBooksOrderedByTitle()
+    public async Task<ActionResult<List<BookLoanCountDto>>> GetBooksOrderedByTitle()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
-        var result = analyticsService.GetLoanedBooksOrderedByTitle(today);
+        var result = await analyticsService.GetLoanedBooksOrderedByTitleAsync(today);
         return Ok(result);
     }
 
@@ -46,12 +44,12 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<ReaderLoanCountDto>), 200)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
-    public ActionResult<List<ReaderLoanCountDto>> GetTopReadersByNumberOfBooks(
+    public async Task<ActionResult<List<ReaderLoanCountDto>>> GetTopReadersByNumberOfBooks(
         [FromQuery] DateOnly start,
         [FromQuery] DateOnly end,
         [FromQuery] int resultCount = 5)
     {
-        var result = analyticsService.GetTopReadersByLoanCount(start, end, resultCount);
+        var result = await analyticsService.GetTopReadersByLoanCountAsync(start, end, resultCount);
         return Ok(result);
     }
 
@@ -67,9 +65,9 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<ReaderLoanDurationDto>), 200)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
-    public ActionResult<List<ReaderLoanDurationDto>> GetTopReadersByTotalLoanDays()
+    public async Task<ActionResult<List<ReaderLoanDurationDto>>> GetTopReadersByTotalLoanDays()
     {
-        var result = analyticsService.GetTopReadersByLongestLoanTermOrderedByName();
+        var result = await analyticsService.GetTopReadersByLongestLoanTermOrderedByNameAsync();
         return Ok(result);
     }
 
@@ -87,12 +85,12 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<PublisherLoanCountDto>), 200)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
-    public ActionResult<List<PublisherLoanCountDto>> GetTopPopularPublishersLastYear(
+    public async Task<ActionResult<List<PublisherLoanCountDto>>> GetTopPopularPublishersLastYear(
         [FromQuery] DateOnly start,
         [FromQuery] DateOnly end,
         [FromQuery] int resultCount = 5)
     {
-        var result = analyticsService.GetTopPublishersByLoanCount(start, end, resultCount);
+        var result = await analyticsService.GetTopPublishersByLoanCountAsync(start, end, resultCount);
         return Ok(result);
     }
 
@@ -110,12 +108,12 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<BookLoanCountDto>), 200)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
-    public ActionResult<List<BookLoanCountDto>> GetTopLeastPopularBooksLastYear(
+    public async Task<ActionResult<List<BookLoanCountDto>>> GetTopLeastPopularBooksLastYear(
         [FromQuery] DateOnly start,
         [FromQuery] DateOnly end,
         [FromQuery] int resultCount = 5)
     {
-        var result = analyticsService.GetBooksByLowestLoanCount(start, end, resultCount);
+        var result = await analyticsService.GetBooksByLowestLoanCountAsync(start, end, resultCount);
         return Ok(result);
     }
 }

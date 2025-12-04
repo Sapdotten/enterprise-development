@@ -23,10 +23,10 @@ public class LibraryAnalyticsService(
     /// </summary>
     /// <param name="date">The reference date to evaluate active loans.</param>
     /// <returns>List of books on loan, mapped to BookGetDTO and sorted by title.</returns>
-    public List<BookGetDto> GetLoanedBooksOrderedByTitle(DateOnly date)
+    public async Task<List<BookGetDto>> GetLoanedBooksOrderedByTitleAsync(DateOnly date)
     {
-        var loanRecords = loanRecordRepository.ReadAll();
-        var books = bookRepository.ReadAll();
+        var loanRecords = await loanRecordRepository.ReadAllAsync();
+        var books = await bookRepository.ReadAllAsync();
 
         var loanedBooks = loanRecords
             .Where(lr => lr.IssueDate <= date && lr.IssueDate.AddDays(lr.LoanTerm) >= date)
@@ -39,6 +39,7 @@ public class LibraryAnalyticsService(
             )
             .OrderBy(b => b.Title)
             .ToList();
+
         return mapper.Map<List<BookGetDto>>(loanedBooks);
     }
 
@@ -50,28 +51,33 @@ public class LibraryAnalyticsService(
     /// <param name="periodEnd">End date of the analysis period (inclusive).</param>
     /// <param name="resultsCount">Maximum number of results to return.</param>
     /// <returns>List of readers with highest loan counts, limited to resultsCount.</returns>
-    public List<ReaderLoanCountDto> GetTopReadersByLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount)
+    public async Task<List<ReaderLoanCountDto>> GetTopReadersByLoanCountAsync(
+        DateOnly periodBegin,
+        DateOnly periodEnd,
+        int resultsCount)
     {
-        var loanRecords = loanRecordRepository.ReadAll();
-        var readers = readerRepository.ReadAll();
+        var loanRecords = await loanRecordRepository.ReadAllAsync();
+        var readers = await readerRepository.ReadAllAsync();
+
         var topReaders = loanRecords
-                .Where(lr => lr.IssueDate >= periodBegin && lr.IssueDate <= periodEnd)
-                .GroupBy(lr => lr.ReaderId)
-                .Join(
-                    readers,
-                    lr => lr.Key,
-                    r => r.Id,
-                    (lr, r) =>
-                    {
-                        var reader = mapper.Map<ReaderLoanCountDto>(r);
-                        reader.LoanCount = lr.Count();
-                        return reader;
-                    }
-                )
-                .OrderByDescending(r => r.LoanCount)
-                .ThenBy(r => r.LastName)
-                .Take(resultsCount)
-                .ToList();
+            .Where(lr => lr.IssueDate >= periodBegin && lr.IssueDate <= periodEnd)
+            .GroupBy(lr => lr.ReaderId)
+            .Join(
+                readers,
+                lr => lr.Key,
+                r => r.Id,
+                (lr, r) =>
+                {
+                    var reader = mapper.Map<ReaderLoanCountDto>(r);
+                    reader.LoanCount = lr.Count();
+                    return reader;
+                }
+            )
+            .OrderByDescending(r => r.LoanCount)
+            .ThenBy(r => r.LastName)
+            .Take(resultsCount)
+            .ToList();
+
         return topReaders;
     }
 
@@ -81,27 +87,30 @@ public class LibraryAnalyticsService(
     /// Results are ordered by full name (last, first, patronymic).
     /// </summary>
     /// <returns>List of readers with the longest loan term, ordered by name.</returns>
-    public List<ReaderLoanDurationDto> GetTopReadersByLongestLoanTermOrderedByName()
+    public async Task<List<ReaderLoanDurationDto>> GetTopReadersByLongestLoanTermOrderedByNameAsync()
     {
-        var loanRecords = loanRecordRepository.ReadAll();
-        var readers = readerRepository.ReadAll();
+        var loanRecords = await loanRecordRepository.ReadAllAsync();
+        var readers = await readerRepository.ReadAllAsync();
+
+        var maxTerm = loanRecords.Max(lr => lr.LoanTerm);
 
         var topReaders = loanRecords
-                .Where(x => x.LoanTerm == loanRecords.Max(lr => lr.LoanTerm))
-                .GroupBy(lr => lr.ReaderId)
-                .Join(
-                    readers,
-                    lr => lr.Key,
-                    r => r.Id,
-                    (lr, r) =>
-                    {
-                        var reader = mapper.Map<ReaderLoanDurationDto>(r);
-                        reader.Duration = lr.Max(r => r.LoanTerm);
-                        return reader;
-                    }
-                )
-                .OrderBy(r => $"{r.LastName} {r.FirstName} {r.PatronymicName}")
-                .ToList();
+            .Where(x => x.LoanTerm == maxTerm)
+            .GroupBy(lr => lr.ReaderId)
+            .Join(
+                readers,
+                lr => lr.Key,
+                r => r.Id,
+                (lr, r) =>
+                {
+                    var reader = mapper.Map<ReaderLoanDurationDto>(r);
+                    reader.Duration = lr.Max(x => x.LoanTerm);
+                    return reader;
+                }
+            )
+            .OrderBy(r => $"{r.LastName} {r.FirstName} {r.PatronymicName}")
+            .ToList();
+
         return topReaders;
     }
 
@@ -113,28 +122,33 @@ public class LibraryAnalyticsService(
     /// <param name="periodEnd">End date of the analysis period (inclusive).</param>
     /// <param name="resultsCount">Maximum number of results to return.</param>
     /// <returns>List of publishers with highest loan counts, limited to resultsCount.</returns>
-    public List<PublisherLoanCountDto> GetTopPublishersByLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount)
+    public async Task<List<PublisherLoanCountDto>> GetTopPublishersByLoanCountAsync(
+        DateOnly periodBegin,
+        DateOnly periodEnd,
+        int resultsCount)
     {
-        var loanRecords = loanRecordRepository.ReadAll();
-        var books = bookRepository.ReadAll();
+        var loanRecords = await loanRecordRepository.ReadAllAsync();
+        var books = await bookRepository.ReadAllAsync();
+
         var topPublishers = loanRecords
-                .Where(lr => lr.IssueDate >= periodBegin && lr.IssueDate <= periodEnd)
-                .Join(
-                    books,
-                    lr => lr.BookId,
-                    b => b.Id,
-                    (lr, b) => b.Publisher.ToString()
-                )
-                .GroupBy(p => p)
-                .Select(g => new PublisherLoanCountDto
-                {
-                    PublisherName = g.Key,
-                    LoanCount = g.Count()
-                })
-                .OrderByDescending(dto => dto.LoanCount)
-                .ThenBy(dto => dto.PublisherName)
-                .Take(resultsCount)
-                .ToList();
+            .Where(lr => lr.IssueDate >= periodBegin && lr.IssueDate <= periodEnd)
+            .Join(
+                books,
+                lr => lr.BookId,
+                b => b.Id,
+                (lr, b) => b.Publisher.ToString()
+            )
+            .GroupBy(p => p)
+            .Select(g => new PublisherLoanCountDto
+            {
+                PublisherName = g.Key,
+                LoanCount = g.Count()
+            })
+            .OrderByDescending(dto => dto.LoanCount)
+            .ThenBy(dto => dto.PublisherName)
+            .Take(resultsCount)
+            .ToList();
+
         return topPublishers;
     }
 
@@ -146,28 +160,33 @@ public class LibraryAnalyticsService(
     /// <param name="periodEnd">End date of the analysis period (inclusive).</param>
     /// <param name="resultsCount">Maximum number of results to return.</param>
     /// <returns>List of least popular books, limited to resultsCount.</returns>
-    public List<BookLoanCountDto> GetBooksByLowestLoanCount(DateOnly periodBegin, DateOnly periodEnd, int resultsCount)
+    public async Task<List<BookLoanCountDto>> GetBooksByLowestLoanCountAsync(
+        DateOnly periodBegin,
+        DateOnly periodEnd,
+        int resultsCount)
     {
-        var loanRecords = loanRecordRepository.ReadAll();
-        var books = bookRepository.ReadAll();
+        var loanRecords = await loanRecordRepository.ReadAllAsync();
+        var books = await bookRepository.ReadAllAsync();
+
         var topBooks = loanRecords
-                .Where(lr => lr.IssueDate >= periodBegin && lr.IssueDate <= periodEnd)
-                .GroupBy(lr => lr.BookId)
-                .Join(
-                    books,
-                    lr => lr.Key,
-                    r => r.Id,
-                    (lr, r) =>
-                    {
-                        var book = mapper.Map<BookLoanCountDto>(r);
-                        book.LoanCount = lr.Count();
-                        return book;
-                    }
-                )
-                .OrderBy(b => b.LoanCount)
-                .ThenBy(b => b.Title)
-                .Take(resultsCount)
-                .ToList();
+            .Where(lr => lr.IssueDate >= periodBegin && lr.IssueDate <= periodEnd)
+            .GroupBy(lr => lr.BookId)
+            .Join(
+                books,
+                lr => lr.Key,
+                r => r.Id,
+                (lr, r) =>
+                {
+                    var book = mapper.Map<BookLoanCountDto>(r);
+                    book.LoanCount = lr.Count();
+                    return book;
+                }
+            )
+            .OrderBy(b => b.LoanCount)
+            .ThenBy(b => b.Title)
+            .Take(resultsCount)
+            .ToList();
+
         return topBooks;
     }
 }

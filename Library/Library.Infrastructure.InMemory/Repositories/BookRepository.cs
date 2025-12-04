@@ -2,7 +2,7 @@
 using Library.Domain.Entities;
 using Library.Domain.Data;
 
-namespace Library.Infrastructure.Repositories;
+namespace Library.Infrastructure.InMemory.Repositories;
 
 /// <summary>
 /// In-memory implementation of IRepository for Book entities.
@@ -28,11 +28,11 @@ public class BookRepository : IRepository<Book, int>
     /// </summary>
     /// <param name="book">The book instance to create. Must not be null.</param>
     /// <returns>The unique identifier assigned to the created book.</returns>
-    public int Create(Book book)
+    public Task<int> CreateAsync(Book book)
     {
         book.Id = ++_maxId;
         _books.Add(book);
-        return book.Id;
+        return Task.FromResult(book.Id);
     }
 
     /// <summary>
@@ -40,10 +40,10 @@ public class BookRepository : IRepository<Book, int>
     /// </summary>
     /// <param name="book">The book instance with updated values. Must not be null.</param>
     /// <returns>The updated book if found; otherwise, null.</returns>
-    public Book? Update(Book book)
+    public Task<Book?> UpdateAsync(Book book)
     {
-        var toUpdateBook = Read(book.Id);
-        if (toUpdateBook == null) return null;
+        var toUpdateBook = _books.FirstOrDefault(a => a.Id == book.Id);
+        if (toUpdateBook == null) return Task.FromResult<Book?>(null);
 
         toUpdateBook.InventoryNumber = book.InventoryNumber;
         toUpdateBook.Code = book.Code;
@@ -51,7 +51,9 @@ public class BookRepository : IRepository<Book, int>
         toUpdateBook.Title = book.Title;
         toUpdateBook.PublisherType = book.PublisherType;
         toUpdateBook.Publisher = book.Publisher;
-        return toUpdateBook;
+        toUpdateBook.Year = book.Year;
+
+        return Task.FromResult<Book?>(toUpdateBook);
     }
 
     /// <summary>
@@ -59,20 +61,22 @@ public class BookRepository : IRepository<Book, int>
     /// </summary>
     /// <param name="id">The unique identifier of the book to delete.</param>
     /// <returns>True if the book was found and deleted; otherwise, false.</returns>
-    public bool Delete(int id)
+    public Task<bool> DeleteAsync(int id)
     {
-        var toDeleteBook = Read(id);
-        if (toDeleteBook == null) return false;
-        return _books.Remove(toDeleteBook);
+        var toDeleteBook = _books.FirstOrDefault(a => a.Id == id);
+        if (toDeleteBook == null) return Task.FromResult(false);
+
+        var result = _books.Remove(toDeleteBook);
+        return Task.FromResult(result);
     }
 
     /// <summary>
     /// Retrieves all books currently stored in the repository.
     /// </summary>
     /// <returns>A list of all books. Returns a copy of the internal collection.</returns>
-    public List<Book> ReadAll()
+    public Task<List<Book>> ReadAllAsync()
     {
-        return [.. _books];
+        return Task.FromResult<List<Book>>([.. _books]);
     }
 
     /// <summary>
@@ -80,8 +84,9 @@ public class BookRepository : IRepository<Book, int>
     /// </summary>
     /// <param name="id">The unique identifier of the book to retrieve.</param>
     /// <returns>The book if found; otherwise, null.</returns>
-    public Book? Read(int id)
+    public Task<Book?> ReadAsync(int id)
     {
-        return _books.FirstOrDefault(a => a.Id == id);
+        var book = _books.FirstOrDefault(a => a.Id == id);
+        return Task.FromResult(book);
     }
 }

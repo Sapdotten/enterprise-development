@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Library.Api.Controllers;
 
 /// <summary>
-/// Base controller for CRUD operations.
+/// Base asynchronous controller for CRUD operations.
 /// Provides common HTTP methods and structured logging for derived controllers.
 /// </summary>
 /// <typeparam name="TGetDto">DTO type for reading data.</typeparam>
@@ -15,7 +15,6 @@ namespace Library.Api.Controllers;
 public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     IApplicationService<TGetDto, TCreateDto, TKey> appService) : ControllerBase
 {
-
     /// <summary>
     /// Creates a new entity from the provided DTO.
     /// </summary>
@@ -25,9 +24,9 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     [ProducesResponseType(201)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
-    public ActionResult<TGetDto> Create(TCreateDto newDto)
+    public async Task<ActionResult<TGetDto>> Create(TCreateDto newDto)
     {
-        var result = appService.Create(newDto);
+        var result = await appService.CreateAsync(newDto);
         return CreatedAtAction(nameof(Create), result);
     }
 
@@ -41,11 +40,11 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
-    public ActionResult<TGetDto> Edit(TKey id, TCreateDto newDto)
+    public async Task<ActionResult<TGetDto>> Edit(TKey id, TCreateDto newDto)
     {
         try
         {
-            var result = appService.Update(newDto, id);
+            var result = await appService.UpdateAsync(newDto, id);
             return Ok(result);
         }
         catch (KeyNotFoundException)
@@ -62,9 +61,9 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     [HttpDelete("{id}")]
     [ProducesResponseType(204)]
     [ServiceFilter<LoggingActionFilter>]
-    public IActionResult Delete(TKey id)
+    public async Task<IActionResult> Delete(TKey id)
     {
-        appService.Delete(id);
+        await appService.DeleteAsync(id);
         return NoContent();
     }
 
@@ -76,9 +75,9 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
-    public ActionResult<IList<TGetDto>> GetAll()
+    public async Task<ActionResult<IList<TGetDto>>> GetAll()
     {
-        var result = appService.GetAll();
+        var result = await appService.GetAllAsync();
         return Ok(result);
     }
 
@@ -86,16 +85,16 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(
     /// Retrieves a single entity by its identifier.
     /// </summary>
     /// <param name="id">Identifier of the entity to retrieve.</param>
-    /// <returns>Entity DTO with 200 status or 500 on error.</returns>
+    /// <returns>Entity DTO with 200 status or 404 if not found.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
     [ServiceFilter<LoggingActionFilter>]
-    public ActionResult<TGetDto> Get(TKey id)
+    public async Task<ActionResult<TGetDto>> Get(TKey id)
     {
         try
         {
-            var result = appService.Get(id);
+            var result = await appService.GetAsync(id);
             return Ok(result);
         }
         catch (KeyNotFoundException)

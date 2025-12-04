@@ -14,20 +14,20 @@ public interface IApplicationService<TGetDto, TCreateDto, TKey>
     /// </summary>
     /// <param name="dto">The DTO containing the data for the new entity. Must not be null.</param>
     /// <returns>The created entity represented as a TGetDTO.</returns>
-    public TGetDto Create(TCreateDto dto);
+    public Task<TGetDto> CreateAsync(TCreateDto dto);
 
     /// <summary>
     /// Retrieves an entity by its unique identifier.
     /// </summary>
     /// <param name="dtoId">The unique identifier of the entity to retrieve.</param>
     /// <returns>The entity as a TGetDTO if found; otherwise, throws KeyNotFoundException.</returns>
-    public TGetDto Get(TKey dtoId);
+    public Task<TGetDto> GetAsync(TKey dtoId);
 
     /// <summary>
     /// Retrieves a list of all entities.
     /// </summary>
     /// <returns>A list of all entities represented as TGetDTOs. Returns empty list if none exist.</returns>
-    public List<TGetDto> GetAll();
+    public Task<List<TGetDto>> GetAllAsync();
 
     /// <summary>
     /// Updates an existing entity with data from the provided DTO.
@@ -35,12 +35,12 @@ public interface IApplicationService<TGetDto, TCreateDto, TKey>
     /// <param name="dto">The DTO containing the updated data. Must not be null.</param>
     /// <param name="dtoid">The unique identifier of the entity to update.</param>
     /// <returns>The updated entity represented as a TGetDTO.</returns>
-    public TGetDto Update(TCreateDto dto, TKey dtoid);
+    public Task<TGetDto> UpdateAsync(TCreateDto dto, TKey dtoid);
 
     /// <summary>
     /// Deletes an entity identified by its unique identifier.
     /// </summary>
     /// <param name="dtoId">The unique identifier of the entity to delete.</param>
     /// <returns>True, if success, False when no book exists with the given ID.</returns>
-    public bool Delete(TKey dtoId);
+    public Task<bool> DeleteAsync(TKey dtoId);
 }

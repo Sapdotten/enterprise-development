@@ -10,18 +10,18 @@ namespace Library.Application.Services;
 /// Service for managing book-related operations, including CRUD actions and DTO mapping.
 /// </summary>
 public class BookService(
-    IRepository<Book, int> bookRepository, IMapper mapper) : IApplicationService<BookGetDto, BookCreateDto, int>
+    IRepository<Book, int> bookRepository, IMapper mapper)
+    : IApplicationService<BookGetDto, BookCreateDto, int>
 {
     /// <summary>
     /// Creates a new book from the provided DTO.
     /// </summary>
     /// <param name="dto">The DTO containing book data. Must not be null.</param>
     /// <returns>The created book as a BookGetDTO.</returns>
-    public BookGetDto Create(BookCreateDto dto)
+    public async Task<BookGetDto> CreateAsync(BookCreateDto dto)
     {
         var newBook = mapper.Map<Book>(dto);
-        bookRepository.Create(newBook);
-
+        await bookRepository.CreateAsync(newBook);
         return mapper.Map<BookGetDto>(newBook);
     }
 
@@ -31,9 +31,11 @@ public class BookService(
     /// <param name="dtoId">The ID of the book to retrieve.</param>
     /// <returns>The book as a BookGetDTO if found.</returns>
     /// <exception cref="InvalidOperationException">Thrown when no book exists with the given ID.</exception>
-    public BookGetDto Get(int dtoId)
+    public async Task<BookGetDto> GetAsync(int dtoId)
     {
-        var book = bookRepository.Read(dtoId) ?? throw new InvalidOperationException($"Book with ID {dtoId} was not found");
+        var book = await bookRepository.ReadAsync(dtoId)
+                   ?? throw new InvalidOperationException($"Book with ID {dtoId} was not found");
+
         return mapper.Map<BookGetDto>(book);
     }
 
@@ -41,9 +43,9 @@ public class BookService(
     /// Retrieves a list of all books.
     /// </summary>
     /// <returns>A list of all books represented as BookGetDTOs. Returns empty list if none exist.</returns>
-    public List<BookGetDto> GetAll()
+    public async Task<List<BookGetDto>> GetAllAsync()
     {
-        var books = bookRepository.ReadAll();
+        var books = await bookRepository.ReadAllAsync();
         return mapper.Map<List<BookGetDto>>(books);
     }
 
@@ -54,11 +56,14 @@ public class BookService(
     /// <param name="dtoId">The ID of the book to update.</param>
     /// <returns>The updated book as a BookGetDTO.</returns>
     /// <exception cref="InvalidOperationException">Thrown when no book exists with the given ID.</exception>
-    public BookGetDto Update(BookCreateDto dto, int dtoId)
+    public async Task<BookGetDto> UpdateAsync(BookCreateDto dto, int dtoId)
     {
-        var toUpdateBook = bookRepository.Read(dtoId) ?? throw new InvalidOperationException($"Book with ID {dtoId} was not found for updating");
+        var toUpdateBook = await bookRepository.ReadAsync(dtoId)
+                           ?? throw new InvalidOperationException($"Book with ID {dtoId} was not found for updating");
+
         mapper.Map(dto, toUpdateBook);
-        bookRepository.Update(toUpdateBook);
+        await bookRepository.UpdateAsync(toUpdateBook);
+
         return mapper.Map<BookGetDto>(toUpdateBook);
     }
 
@@ -67,8 +72,8 @@ public class BookService(
     /// </summary>
     /// <param name="dtoId">The ID of the book to delete.</param>
     /// <returns>True, if success, False when no book exists with the given ID.</returns>
-    public bool Delete(int dtoId)
+    public async Task<bool> DeleteAsync(int dtoId)
     {
-        return bookRepository.Delete(dtoId);
+        return await bookRepository.DeleteAsync(dtoId);
     }
 }

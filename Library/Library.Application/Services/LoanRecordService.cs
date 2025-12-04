@@ -3,7 +3,6 @@ using Library.Application.Contracts.Dtos;
 using Library.Application.Contracts.Interfaces;
 using Library.Domain.Interfaces;
 using Library.Domain.Entities;
-using System.Reflection.Metadata;
 
 namespace Library.Application.Services;
 
@@ -11,18 +10,21 @@ namespace Library.Application.Services;
 /// Application service for managing loan record operations.
 /// </summary>
 public class LoanRecordService(
-    IRepository<LoanRecord, int> loanRecordRepository, IMapper mapper, IRepository<Book, int> bookRepository, IRepository<Reader, int> readerRepository
-    ) : ILoanRecordService
+    IRepository<LoanRecord, int> loanRecordRepository,
+    IMapper mapper,
+    IRepository<Book, int> bookRepository,
+    IRepository<Reader, int> readerRepository
+) : ILoanRecordService
 {
     /// <summary>
     /// Creates a new loan record from the provided DTO.
     /// </summary>
     /// <param name="dto">The DTO containing loan record data. Must not be null.</param>
     /// <returns>The created loan record as a LoanRecordGetDTO.</returns>
-    public LoanRecordGetDto Create(LoanRecordCreateDto dto)
+    public async Task<LoanRecordGetDto> CreateAsync(LoanRecordCreateDto dto)
     {
         var newLoanRecord = mapper.Map<LoanRecord>(dto);
-        loanRecordRepository.Create(newLoanRecord);
+        await loanRecordRepository.CreateAsync(newLoanRecord);
         return mapper.Map<LoanRecordGetDto>(newLoanRecord);
     }
 
@@ -32,9 +34,11 @@ public class LoanRecordService(
     /// <param name="dtoId">The ID of the loan record to retrieve.</param>
     /// <returns>The loan record as a LoanRecordGetDTO if found.</returns>
     /// <exception cref="InvalidOperationException">Thrown when no loan record exists with the given ID.</exception>
-    public LoanRecordGetDto Get(int dtoId)
+    public async Task<LoanRecordGetDto> GetAsync(int dtoId)
     {
-        var loanRecord = loanRecordRepository.Read(dtoId) ?? throw new InvalidOperationException($"Loan record with {dtoId} was not found");
+        var loanRecord = await loanRecordRepository.ReadAsync(dtoId)
+            ?? throw new InvalidOperationException($"Loan record with {dtoId} was not found");
+
         return mapper.Map<LoanRecordGetDto>(loanRecord);
     }
 
@@ -42,9 +46,9 @@ public class LoanRecordService(
     /// Retrieves a list of all loan records.
     /// </summary>
     /// <returns>A list of all loan records represented as LoanRecordGetDTOs. Returns empty list if none exist.</returns>
-    public List<LoanRecordGetDto> GetAll()
+    public async Task<List<LoanRecordGetDto>> GetAllAsync()
     {
-        var loanRecords = loanRecordRepository.ReadAll();
+        var loanRecords = await loanRecordRepository.ReadAllAsync();
         return mapper.Map<List<LoanRecordGetDto>>(loanRecords);
     }
 
@@ -55,11 +59,14 @@ public class LoanRecordService(
     /// <param name="dtoId">The ID of the loan record to update.</param>
     /// <returns>The updated loan record as a LoanRecordGetDTO.</returns>
     /// <exception cref="InvalidOperationException">Thrown when no loan record exists with the given ID.</exception>
-    public LoanRecordGetDto Update(LoanRecordCreateDto dto, int dtoId)
+    public async Task<LoanRecordGetDto> UpdateAsync(LoanRecordCreateDto dto, int dtoId)
     {
-        var toUpdateLoanRecord = loanRecordRepository.Read(dtoId) ?? throw new InvalidOperationException($"Loan record with ID {dtoId} was not found for updating");
+        var toUpdateLoanRecord = await loanRecordRepository.ReadAsync(dtoId)
+            ?? throw new InvalidOperationException($"Loan record with ID {dtoId} was not found for updating");
+
         mapper.Map(dto, toUpdateLoanRecord);
-        loanRecordRepository.Update(toUpdateLoanRecord);
+        await loanRecordRepository.UpdateAsync(toUpdateLoanRecord);
+
         return mapper.Map<LoanRecordGetDto>(toUpdateLoanRecord);
     }
 
@@ -68,9 +75,9 @@ public class LoanRecordService(
     /// </summary>
     /// <param name="dtoId">The ID of the loan record to delete.</param>
     /// <returns>True, if success, False when no book exists with the given ID.</returns>
-    public bool Delete(int dtoId)
+    public async Task<bool> DeleteAsync(int dtoId)
     {
-        return loanRecordRepository.Delete(dtoId);
+        return await loanRecordRepository.DeleteAsync(dtoId);
     }
 
     /// <summary>
@@ -85,18 +92,17 @@ public class LoanRecordService(
     {
         foreach (var dto in dtos)
         {
-            var book = bookRepository.Read(dto.BookId)
+            var book = await bookRepository.ReadAsync(dto.BookId)
                 ?? throw new InvalidOperationException($"Книга с ID {dto.BookId} не найдена.");
 
-            var reader = readerRepository.Read(dto.ReaderId)
+            var reader = await readerRepository.ReadAsync(dto.ReaderId)
                 ?? throw new InvalidOperationException($"Читатель с ID {dto.ReaderId} не найден.");
 
             var loanRecord = mapper.Map<LoanRecord>(dto);
             loanRecord.BookId = book.Id;
             loanRecord.ReaderId = reader.Id;
 
-            loanRecordRepository.Create(loanRecord);
+            await loanRecordRepository.CreateAsync(loanRecord);
         }
     }
-
 }

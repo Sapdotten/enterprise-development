@@ -3,8 +3,9 @@
 namespace Library.Application.Contracts.Interfaces;
 
 /// <summary>
-/// Service interface for managing loan record operations, including creation and batch processing of contracts.
-/// Extends IApplicationService to provide additional methods.
+/// Asynchronous service interface for managing loan record operations,
+/// including creation and batch processing of contracts.
+/// Extends the asynchronous version of IApplicationService and adds extra methods.
 /// </summary>
 public interface ILoanRecordService : IApplicationService<LoanRecordGetDto, LoanRecordCreateDto, int>
 {
@@ -13,5 +14,5 @@ public interface ILoanRecordService : IApplicationService<LoanRecordGetDto, Loan
     /// Maps each DTO to a domain entity and persists them in the data store.
     /// </summary>
     /// <param name="contracts">List of LoanRecordCreateDto representing new loan agreements. Must not be null.</param>
-    public Task ReceiveContractAsync(IList<LoanRecordCreateDto> contracts);
+    Task ReceiveContractAsync(IList<LoanRecordCreateDto> contracts);
 }

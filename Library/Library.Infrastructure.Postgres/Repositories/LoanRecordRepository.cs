@@ -1,34 +1,24 @@
 ﻿using Library.Domain.Interfaces;
 using Library.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Library.Infrastructure.Postgres.Repositories;
 
 /// <summary>
-/// In-memory implementation of IRepository for LoanRecord entities.
-/// Initializes with seed data and manages unique IDs via an incrementing counter.
+/// Asynchronous repository implementation for LoanRecord entities using Entity Framework Core.
 /// </summary>
 public class LoanRecordRepository(AppDbContext dbContext) : IRepository<LoanRecord, int>
 {
-    /// <summary>
-    /// Creates a new loan record with a unique identifier.
-    /// </summary>
-    /// <param name="loanRecord">The loan record to create. Must not be null.</param>
-    /// <returns>The unique identifier assigned to the created loan record.</returns>
-    public int Create(LoanRecord loanRecord)
+    public async Task<int> CreateAsync(LoanRecord loanRecord)
     {
-        var entry = dbContext.LoanRecords.Add(loanRecord);
-        dbContext.SaveChanges();
+        var entry = await dbContext.LoanRecords.AddAsync(loanRecord);
+        await dbContext.SaveChangesAsync();
         return entry.Entity.Id;
     }
 
-    /// <summary>
-    /// Updates an existing loan record with new property values.
-    /// </summary>
-    /// <param name="loanRecord">The loan record with updated values. Must not be null.</param>
-    /// <returns>The updated loan record if found; otherwise, null.</returns>
-    public LoanRecord? Update(LoanRecord loanRecord)
+    public async Task<LoanRecord?> UpdateAsync(LoanRecord loanRecord)
     {
-        var toUpdateLoanRecord = Read(loanRecord.Id);
+        var toUpdateLoanRecord = await ReadAsync(loanRecord.Id);
         if (toUpdateLoanRecord == null) return null;
 
         toUpdateLoanRecord.BookId = loanRecord.BookId;
@@ -36,42 +26,27 @@ public class LoanRecordRepository(AppDbContext dbContext) : IRepository<LoanReco
         toUpdateLoanRecord.IssueDate = loanRecord.IssueDate;
         toUpdateLoanRecord.LoanTerm = loanRecord.LoanTerm;
 
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
 
         return toUpdateLoanRecord;
     }
 
-    /// <summary>
-    /// Deletes a loan record by its unique identifier.
-    /// </summary>
-    /// <param name="Id">The unique identifier of the loan record to delete.</param>
-    /// <returns>True if the record was found and removed; otherwise, false.</returns>
-    public bool Delete(int Id)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var toDeleteLoanRecord = Read(Id);
+        var toDeleteLoanRecord = await ReadAsync(id);
         if (toDeleteLoanRecord == null) return false;
-
         dbContext.Remove(toDeleteLoanRecord);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
         return true;
     }
 
-    /// <summary>
-    /// Retrieves all loan records currently stored in the repository.
-    /// </summary>
-    /// <returns>A list of all loan records. Returns a copy of the internal collection.</returns>
-    public List<LoanRecord> ReadAll()
+    public async Task<List<LoanRecord>> ReadAllAsync()
     {
-        return [.. dbContext.LoanRecords];
+        return await dbContext.LoanRecords.ToListAsync();
     }
 
-    /// <summary>
-    /// Retrieves a single loan record by its unique identifier.
-    /// </summary>
-    /// <param name="id">The unique identifier of the loan record to retrieve.</param>
-    /// <returns>The loan record if found; otherwise, null.</returns>
-    public LoanRecord? Read(int id)
+    public async Task<LoanRecord?> ReadAsync(int id)
     {
-        return dbContext.LoanRecords.FirstOrDefault(r => r.Id == id);
+        return await dbContext.LoanRecords.FirstOrDefaultAsync(r => r.Id == id);
     }
 }

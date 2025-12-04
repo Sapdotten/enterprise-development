@@ -1,4 +1,4 @@
-﻿using Library.Infrastructure.Repositories;
+﻿using Library.Infrastructure.InMemory.Repositories;
 
 namespace Library.Tests;
 

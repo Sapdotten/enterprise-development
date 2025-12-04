@@ -2,7 +2,7 @@
 using Library.Domain.Entities;
 using Library.Domain.Data;
 
-namespace Library.Infrastructure.Repositories;
+namespace Library.Infrastructure.InMemory.Repositories;
 
 /// <summary>
 /// In-memory implementation of IRepository for Reader entities.
@@ -28,11 +28,11 @@ public class ReaderRepository : IRepository<Reader, int>
     /// </summary>
     /// <param name="reader">The reader instance to create. Must not be null.</param>
     /// <returns>The unique identifier assigned to the created reader.</returns>
-    public int Create(Reader reader)
+    public Task<int> CreateAsync(Reader reader)
     {
         reader.Id = ++_maxId;
         _readers.Add(reader);
-        return reader.Id;
+        return Task.FromResult(reader.Id);
     }
 
     /// <summary>
@@ -40,19 +40,19 @@ public class ReaderRepository : IRepository<Reader, int>
     /// </summary>
     /// <param name="reader">The reader instance with updated values. Must not be null.</param>
     /// <returns>The updated reader if found; otherwise, null.</returns>
-    public Reader? Update(Reader reader)
+    public Task<Reader?> UpdateAsync(Reader reader)
     {
-        var toUpdateReader = Read(reader.Id);
-        if (toUpdateReader == null) return null;
+        var toUpdate = _readers.FirstOrDefault(r => r.Id == reader.Id);
+        if (toUpdate == null) return Task.FromResult<Reader?>(null);
 
-        toUpdateReader.FirstName = reader.FirstName;
-        toUpdateReader.LastName = reader.LastName;
-        toUpdateReader.PatronymicName = reader.PatronymicName;
-        toUpdateReader.Address = reader.Address;
-        toUpdateReader.PhoneNumber = reader.PhoneNumber;
-        toUpdateReader.RegistrationDate = reader.RegistrationDate;
+        toUpdate.FirstName = reader.FirstName;
+        toUpdate.LastName = reader.LastName;
+        toUpdate.PatronymicName = reader.PatronymicName;
+        toUpdate.Address = reader.Address;
+        toUpdate.PhoneNumber = reader.PhoneNumber;
+        toUpdate.RegistrationDate = reader.RegistrationDate;
 
-        return toUpdateReader;
+        return Task.FromResult<Reader?>(toUpdate);
     }
 
     /// <summary>
@@ -60,20 +60,22 @@ public class ReaderRepository : IRepository<Reader, int>
     /// </summary>
     /// <param name="id">The unique identifier of the reader to delete.</param>
     /// <returns>True if the reader was found and deleted; otherwise, false.</returns>
-    public bool Delete(int id)
+    public Task<bool> DeleteAsync(int id)
     {
-        var toDeleteReader = Read(id);
-        if (toDeleteReader == null) return false;
-        return _readers.Remove(toDeleteReader);
+        var toDelete = _readers.FirstOrDefault(r => r.Id == id);
+        if (toDelete == null) return Task.FromResult(false);
+
+        var result = _readers.Remove(toDelete);
+        return Task.FromResult(result);
     }
 
     /// <summary>
     /// Retrieves all readers currently stored in the repository.
     /// </summary>
     /// <returns>A list of all readers. Returns a copy of the internal collection.</returns>
-    public List<Reader> ReadAll()
+    public Task<List<Reader>> ReadAllAsync()
     {
-        return [.. _readers];
+        return Task.FromResult<List<Reader>>([.. _readers]);
     }
 
     /// <summary>
@@ -81,8 +83,9 @@ public class ReaderRepository : IRepository<Reader, int>
     /// </summary>
     /// <param name="id">The unique identifier of the reader to retrieve.</param>
     /// <returns>The reader if found; otherwise, null.</returns>
-    public Reader? Read(int id)
+    public Task<Reader?> ReadAsync(int id)
     {
-        return _readers.FirstOrDefault(r => r.Id == id);
+        var reader = _readers.FirstOrDefault(r => r.Id == id);
+        return Task.FromResult(reader);
     }
 }
