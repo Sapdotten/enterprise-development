@@ -2,7 +2,6 @@ using Library.Application.Contracts.Dtos;
 using Library.Generator.Kafka;
 using Library.Generator.Kafka.Serializers;
 using Library.Generator.Kafka.Services;
-using Microsoft.Extensions.Hosting;
 
 var builder = Host.CreateApplicationBuilder(args);
 
