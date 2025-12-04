@@ -18,11 +18,7 @@ public static class LoanRecordGenerator
         new Faker<LoanRecordCreateDto>()
             .RuleFor(x => x.BookId, f => f.Random.Int(1, 11))
             .RuleFor(x => x.ReaderId, f => f.Random.Int(1, 10))
-            .RuleFor(x => x.IssueDate, f =>
-            {
-                var dt = f.Date.Past(1);
-                return new DateOnly(dt.Year, dt.Month, dt.Day);
-            })
+            .RuleFor(x => x.IssueDate, f =>f.Date.PastDateOnly())
             .RuleFor(x => x.LoanTerm, f => f.Random.Int(1, 30))
             .Generate(count);
 }
