@@ -13,28 +13,7 @@ public static class SeedData
     /// Collection of preconfigured Book instances.
     /// Contains 11 books of various genres, authors, publishers, and publication years.
     /// </summary>
-    public static List<Book> Books { get; } = CreateBooks();
-
-    /// <summary>
-    /// Collection of preconfigured Reader instances.
-    /// Contains 10 student readers with full names, contact information, and registration dates.
-    /// </summary>
-    public static List<Reader> Readers { get; } = GetReaders();
-
-    /// <summary>
-    /// Collection of preconfigured LoanRecord instances representing active or historical book loans.
-    /// Contains 12 records linking readers to books with specific issue dates and loan terms.
-    /// </summary>
-    public static List<LoanRecord> LoanRecords { get; } = GetLoanRecords();
-
-    /// <summary>
-    /// Creates and returns a list of sample Book entities.
-    /// Includes fiction, technical literature, and educational books from commercial, academic, 
-    /// and educational publishers, each with unique metadata.
-    /// </summary>
-    /// <returns>A list of 11 fully initialized Book objects.</returns>
-    private static List<Book> CreateBooks() =>
-    [
+    public static List<Book> Books { get; } = [
         new Book
         {
             Id = 1,
@@ -159,13 +138,10 @@ public static class SeedData
     ];
 
     /// <summary>
-    /// Creates and returns a list of sample Reader entities.
-    /// Represents a group of 10 students with realistic personal details and registration dates.
-    /// Used to simulate a user base for borrowing operations and analytics.
+    /// Collection of preconfigured Reader instances.
+    /// Contains 10 student readers with full names, contact information, and registration dates.
     /// </summary>
-    /// <returns>A list of 10 fully initialized Reader objects.</returns>
-    private static List<Reader> GetReaders() =>
-    [
+    public static List<Reader> Readers { get; } = [
         new Reader
         {
             Id = 1,
@@ -269,13 +245,10 @@ public static class SeedData
     ];
 
     /// <summary>
-    /// Creates and returns a list of sample LoanRecord entities.
-    /// Simulates real-world book lending scenarios with varied issue dates, loan durations, 
-    /// and associations between readers and books. Includes both short-term and long-term loans.
+    /// Collection of preconfigured LoanRecord instances representing active or historical book loans.
+    /// Contains 12 records linking readers to books with specific issue dates and loan terms.
     /// </summary>
-    /// <returns>A list of 12 fully initialized LoanRecord objects.</returns>
-    private static List<LoanRecord> GetLoanRecords() =>
-    [
+    public static List<LoanRecord> LoanRecords { get; } = [
         new LoanRecord
         {
             Id = 1,
@@ -365,4 +338,5 @@ public static class SeedData
             LoanTerm = 365
         }
     ];
+    
 }
