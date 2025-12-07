@@ -12,7 +12,8 @@ public static class SeedData
     /// Collection of preconfigured Book instances.
     /// Contains 11 books of various genres, authors, publishers, and publication years.
     /// </summary>
-    public static List<Book> Books { get; } = [
+    public static List<Book> Books { get; } =
+        [
         new Book
         {
             Id = 1,
@@ -140,7 +141,8 @@ public static class SeedData
     /// Collection of preconfigured Reader instances.
     /// Contains 10 student readers with full names, contact information, and registration dates.
     /// </summary>
-    public static List<Reader> Readers { get; } = [
+    public static List<Reader> Readers { get; } = 
+        [
         new Reader
         {
             Id = 1,
@@ -247,7 +249,8 @@ public static class SeedData
     /// Collection of preconfigured LoanRecord instances representing active or historical book loans.
     /// Contains 12 records linking readers to books with specific issue dates and loan terms.
     /// </summary>
-    public static List<LoanRecord> LoanRecords { get; } = [
+    public static List<LoanRecord> LoanRecords { get; } = 
+        [
         new LoanRecord
         {
             Id = 1,
@@ -337,5 +340,5 @@ public static class SeedData
             LoanTerm = 365
         }
     ];
-    
+
 }
