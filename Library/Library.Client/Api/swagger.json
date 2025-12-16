@@ -1,0 +1,1454 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Library.Api",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/analytics/loaned-books": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Retrieves a list of all books currently loaned out, ordered alphabetically by title.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookLoanCountDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookLoanCountDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookLoanCountDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/analytics/top-readers-by-loaned-books-count": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Retrieves the top readers who have borrowed the highest number of books within a specified date range.",
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "description": "Start date of the period (inclusive).",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "description": "End date of the period (inclusive).",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "resultCount",
+            "in": "query",
+            "description": "Maximum number of results to return. Defaults to 5.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReaderLoanCountDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReaderLoanCountDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReaderLoanCountDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/analytics/top-readers-by-longest-loan": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Retrieves readers with the longest single loan duration, ordered by full name.\r\nResults are ranked by name (ascending).",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReaderLoanDurationDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReaderLoanDurationDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReaderLoanDurationDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/analytics/top-publishers-by-loan-count": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Retrieves the top publishers ranked by the number of book loans within a given period.",
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "description": "Start date of the period (inclusive).",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "description": "End date of the period (inclusive).",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "resultCount",
+            "in": "query",
+            "description": "Maximum number of results to return. Defaults to 5.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublisherLoanCountDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublisherLoanCountDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublisherLoanCountDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/analytics/least-popular-books": {
+      "get": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Retrieves the least popular books based on the lowest loan count within a specified time frame.",
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "description": "Start date of the period (inclusive).",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "description": "End date of the period (inclusive).",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "resultCount",
+            "in": "query",
+            "description": "Maximum number of results to return. Defaults to 5.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookLoanCountDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookLoanCountDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookLoanCountDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/Book": {
+      "post": {
+        "tags": [
+          "Book"
+        ],
+        "summary": "Creates a new entity from the provided DTO.",
+        "requestBody": {
+          "description": "Data transfer object containing creation data.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookCreateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookCreateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookGetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookGetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookGetDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Book"
+        ],
+        "summary": "Retrieves all entities as a list of DTOs.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookGetDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookGetDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookGetDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/Book/{id}": {
+      "put": {
+        "tags": [
+          "Book"
+        ],
+        "summary": "Updates an existing entity identified by key.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier of the entity to update.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Data transfer object containing updated data.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookCreateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookCreateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookGetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookGetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookGetDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Book"
+        ],
+        "summary": "Deletes an entity by its identifier.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier of the entity to delete.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Book"
+        ],
+        "summary": "Retrieves a single entity by its identifier.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier of the entity to retrieve.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookGetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookGetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookGetDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/LoanRecord": {
+      "post": {
+        "tags": [
+          "LoanRecord"
+        ],
+        "summary": "Creates a new entity from the provided DTO.",
+        "requestBody": {
+          "description": "Data transfer object containing creation data.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanRecordCreateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanRecordCreateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanRecordCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanRecordGetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanRecordGetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanRecordGetDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "LoanRecord"
+        ],
+        "summary": "Retrieves all entities as a list of DTOs.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LoanRecordGetDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LoanRecordGetDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LoanRecordGetDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/LoanRecord/{id}": {
+      "put": {
+        "tags": [
+          "LoanRecord"
+        ],
+        "summary": "Updates an existing entity identified by key.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier of the entity to update.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Data transfer object containing updated data.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanRecordCreateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanRecordCreateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoanRecordCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanRecordGetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanRecordGetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanRecordGetDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "LoanRecord"
+        ],
+        "summary": "Deletes an entity by its identifier.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier of the entity to delete.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "LoanRecord"
+        ],
+        "summary": "Retrieves a single entity by its identifier.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier of the entity to retrieve.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanRecordGetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanRecordGetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoanRecordGetDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/Reader": {
+      "post": {
+        "tags": [
+          "Reader"
+        ],
+        "summary": "Creates a new entity from the provided DTO.",
+        "requestBody": {
+          "description": "Data transfer object containing creation data.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReaderCreateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReaderCreateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReaderCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderGetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderGetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderGetDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Reader"
+        ],
+        "summary": "Retrieves all entities as a list of DTOs.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReaderGetDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReaderGetDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReaderGetDto"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/Reader/{id}": {
+      "put": {
+        "tags": [
+          "Reader"
+        ],
+        "summary": "Updates an existing entity identified by key.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier of the entity to update.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Data transfer object containing updated data.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReaderCreateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReaderCreateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReaderCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderGetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderGetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderGetDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Reader"
+        ],
+        "summary": "Deletes an entity by its identifier.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier of the entity to delete.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Reader"
+        ],
+        "summary": "Retrieves a single entity by its identifier.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identifier of the entity to retrieve.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderGetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderGetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReaderGetDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BookCreateDto": {
+        "required": [
+          "authors",
+          "code",
+          "inventoryNumber",
+          "publisher",
+          "publisherType",
+          "title",
+          "year"
+        ],
+        "type": "object",
+        "properties": {
+          "inventoryNumber": {
+            "type": "integer",
+            "description": "Unique inventory number of the book assigned by the library.\r\nMust be non-null and unique across all books.",
+            "format": "int32"
+          },
+          "code": {
+            "type": "string",
+            "description": "Catalog code identifying the book within the library's classification system.\r\nMust be non-null.",
+            "nullable": true
+          },
+          "authors": {
+            "type": "string",
+            "description": "Full names of the book's authors, formatted as a comma-separated list if multiple.\r\nMust be not empty.",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the book.\r\nMust be not null.",
+            "nullable": true
+          },
+          "publisherType": {
+            "type": "string",
+            "description": "Type of publisher (e.g., Commercial, Academic, Educational).\r\nUsed to categorize the source and nature of the publication.\r\nMust match one of the supported publisher types.",
+            "nullable": true
+          },
+          "publisher": {
+            "type": "string",
+            "description": "Name of the publishing house responsible for the book's release.\r\nShould correspond to an existing publisher in the library's records.",
+            "nullable": true
+          },
+          "year": {
+            "type": "integer",
+            "description": "Year when the book was published.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data Transfer Object for creating a new book.\r\nContains all necessary metadata required to register a book, excluding auto-generated fields such as ID.\r\nDesigned for use in API requests and service layer operations."
+      },
+      "BookGetDto": {
+        "required": [
+          "authors",
+          "code",
+          "id",
+          "inventoryNumber",
+          "publisher",
+          "publisherType",
+          "title",
+          "year"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier of the book.",
+            "format": "int32"
+          },
+          "inventoryNumber": {
+            "type": "integer",
+            "description": "Unique inventory number of the book.",
+            "format": "int32"
+          },
+          "code": {
+            "type": "string",
+            "description": "Catalog code identifying the book within the library's classification system.",
+            "nullable": true
+          },
+          "authors": {
+            "type": "string",
+            "description": "Full names of the book's authors.",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the book as published.",
+            "nullable": true
+          },
+          "publisherType": {
+            "type": "string",
+            "description": "Type of publisher (e.g., Commercial, Academic, Educational).",
+            "nullable": true
+          },
+          "publisher": {
+            "type": "string",
+            "description": "Name of the publishing house responsible for the book's release.",
+            "nullable": true
+          },
+          "year": {
+            "type": "integer",
+            "description": "Year when the book was published.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data Transfer Object representing a book retrieved from the library system.\r\nContains full book metadata including identifier, catalog information, authorship, \r\npublication details, and is used in read operations across services and API endpoints."
+      },
+      "BookLoanCountDto": {
+        "required": [
+          "authors",
+          "code",
+          "inventoryNumber",
+          "loanCount",
+          "publisher",
+          "publisherType",
+          "title",
+          "year"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unqiue identifier of the book.",
+            "format": "int32"
+          },
+          "inventoryNumber": {
+            "type": "integer",
+            "description": "Unique inventory number of the book.",
+            "format": "int32"
+          },
+          "code": {
+            "type": "string",
+            "description": "Catalog book code.",
+            "nullable": true
+          },
+          "authors": {
+            "type": "string",
+            "description": "Authors of the book.",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "description": "Name of book.",
+            "nullable": true
+          },
+          "publisherType": {
+            "type": "string",
+            "description": "Publication type of book.",
+            "nullable": true
+          },
+          "publisher": {
+            "type": "string",
+            "description": "Publisher of book.",
+            "nullable": true
+          },
+          "year": {
+            "type": "integer",
+            "description": "The year of the book's publication.",
+            "format": "int32"
+          },
+          "loanCount": {
+            "type": "integer",
+            "description": "Total number of times this book has been loaned out.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object representing a book with its loan count.\r\nContains full book metadata and the total number of times the book has been loaned."
+      },
+      "LoanRecordCreateDto": {
+        "required": [
+          "bookId",
+          "issueDate",
+          "loanTerm",
+          "readerId"
+        ],
+        "type": "object",
+        "properties": {
+          "bookId": {
+            "type": "integer",
+            "description": "Identifier of the borrowed book",
+            "format": "int32"
+          },
+          "readerId": {
+            "type": "integer",
+            "description": "Identifier of the reader who borrowed the book",
+            "format": "int32"
+          },
+          "issueDate": {
+            "type": "string",
+            "description": "Date when the book was issued to the reader",
+            "format": "date"
+          },
+          "loanTerm": {
+            "type": "integer",
+            "description": "Duration of the loan period in days",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data Transfer Object for creating a new loan record in the library system."
+      },
+      "LoanRecordGetDto": {
+        "required": [
+          "bookId",
+          "issueDate",
+          "loanTerm",
+          "readerId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier of loan record",
+            "format": "int32"
+          },
+          "bookId": {
+            "type": "integer",
+            "description": "Identifier of the borrowed book",
+            "format": "int32"
+          },
+          "readerId": {
+            "type": "integer",
+            "description": "Identifier of the reader who borrowed the book",
+            "format": "int32"
+          },
+          "issueDate": {
+            "type": "string",
+            "description": "Date when the book was issued to the reader",
+            "format": "date"
+          },
+          "loanTerm": {
+            "type": "integer",
+            "description": "Duration of the loan period in days",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data Transfer Object representing a loan record in the library system."
+      },
+      "PublisherLoanCountDto": {
+        "required": [
+          "loanCount",
+          "publisherName"
+        ],
+        "type": "object",
+        "properties": {
+          "publisherName": {
+            "type": "string",
+            "description": "Name of the publisher.",
+            "nullable": true
+          },
+          "loanCount": {
+            "type": "integer",
+            "description": "Total number of times books from this publisher have been loaned out.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object representing a publisher's loan statistics."
+      },
+      "ReaderCreateDto": {
+        "required": [
+          "address",
+          "firstName",
+          "lastName",
+          "patronymicName",
+          "phoneNumber",
+          "registrationDate"
+        ],
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "First name of the reader. Must not be null or empty.",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last Name of reader",
+            "nullable": true
+          },
+          "patronymicName": {
+            "type": "string",
+            "description": "Patronymic Name of reader",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "description": "Address of reader",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number of reader",
+            "nullable": true
+          },
+          "registrationDate": {
+            "type": "string",
+            "description": "Date of reader registration",
+            "format": "date"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data Transfer Object for creating a new reader in the library system."
+      },
+      "ReaderGetDto": {
+        "required": [
+          "address",
+          "firstName",
+          "lastName",
+          "patronymicName",
+          "phoneNumber",
+          "registrationDate"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier of the reader.",
+            "format": "int32"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First Name of reader",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last Name of reader",
+            "nullable": true
+          },
+          "patronymicName": {
+            "type": "string",
+            "description": "Patronymic Name of reader",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "description": "Address of reader",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Phone number of reader",
+            "nullable": true
+          },
+          "registrationDate": {
+            "type": "string",
+            "description": "Date of reader registration",
+            "format": "date"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data Transfer Object representing a reader in the library system."
+      },
+      "ReaderLoanCountDto": {
+        "required": [
+          "address",
+          "firstName",
+          "lastName",
+          "loanCount",
+          "patronymicName",
+          "phoneNumber",
+          "registrationDate"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier of the reader.",
+            "format": "int32"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name of the reader.",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the reader.",
+            "nullable": true
+          },
+          "patronymicName": {
+            "type": "string",
+            "description": "Patronymic (middle) name of the reader.",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "description": "Residential address of the reader.",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Contact phone number of the reader.",
+            "nullable": true
+          },
+          "registrationDate": {
+            "type": "string",
+            "description": "Date when the reader registered in the library system.",
+            "format": "date"
+          },
+          "loanCount": {
+            "type": "integer",
+            "description": "Total number of books this reader has borrowed.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object representing a reader with their loan count.\r\nContains full reader details and the total number of books they have borrowed."
+      },
+      "ReaderLoanDurationDto": {
+        "required": [
+          "address",
+          "duration",
+          "firstName",
+          "lastName",
+          "patronymicName",
+          "phoneNumber",
+          "registrationDate"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique identifier of the reader.",
+            "format": "int32"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name of the reader.",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the reader.",
+            "nullable": true
+          },
+          "patronymicName": {
+            "type": "string",
+            "description": "Patronymic (middle) name of the reader.",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "description": "Residential address of the reader.",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Contact phone number of the reader.",
+            "nullable": true
+          },
+          "registrationDate": {
+            "type": "string",
+            "description": "Date when the reader registered in the library system.",
+            "format": "date"
+          },
+          "duration": {
+            "type": "integer",
+            "description": "Maximum loan term (in days) this reader has taken for a single book.\r\nUsed to rank readers by the length of time they hold books.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object representing a reader with their maximum loan duration.\r\nContains full reader details and the longest single loan period they have taken.\r\nUsed for ranking readers by book holding time in library analytics."
+      }
+    }
+  }
+}
