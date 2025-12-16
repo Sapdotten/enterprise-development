@@ -1,0 +1,126 @@
+﻿@page "/books/{Id}"
+@inject LibraryApiWrapper LibraryApi
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Изменить книгу</h4>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Clicked="UpdateBookAsync">
+                    Сохранить
+                </Button>
+
+                <Button Color="Color.Danger" Clicked="DeleteBookAsync">
+                    Удалить
+                </Button>
+
+                <Button Color="Color.Secondary" onclick="history.back();">
+                    Закрыть
+                </Button>
+            </Column>
+        </Row>
+    </CardHeader>
+
+    <CardBody>
+        <Field>
+            <FieldLabel>Инвентарный номер *</FieldLabel>
+            <TextEdit @bind-Text="InventoryNumberString" />
+        </Field>
+
+        <Field>
+            <FieldLabel>Код *</FieldLabel>
+            <TextEdit @bind-Text="UpdatedBook.Code" />
+        </Field>
+
+        <Field>
+            <FieldLabel>Авторы *</FieldLabel>
+            <TextEdit @bind-Text="UpdatedBook.Authors" />
+        </Field>
+
+        <Field>
+            <FieldLabel>Название *</FieldLabel>
+            <TextEdit @bind-Text="UpdatedBook.Title" />
+        </Field>
+
+        <Field>
+            <FieldLabel>Тип издания *</FieldLabel>
+            <Select TValue="string" @bind-SelectedValue="UpdatedBook.PublisherType">
+                <SelectItem Value="@PublisherType.Commercial.ToString()">Коммерческое</SelectItem>
+                <SelectItem Value="@PublisherType.Academic.ToString()">Академическое</SelectItem>
+                <SelectItem Value="@PublisherType.Educational.ToString()">Учебное</SelectItem>
+            </Select>
+        </Field>
+
+        <Field>
+            <FieldLabel>Издатель *</FieldLabel>
+            <Select TValue="string" @bind-SelectedValue="UpdatedBook.Publisher">
+                <SelectItem Value="@Publisher.Eksmo.ToString()">ЕКСМО</SelectItem>
+                <SelectItem Value="@Publisher.AST.ToString()">АСТ</SelectItem>
+                <SelectItem Value="@Publisher.AdMarginem.ToString()">Ad Marginem</SelectItem>
+                <SelectItem Value="@Publisher.Binom.ToString()">Бином</SelectItem>
+                <SelectItem Value="@Publisher.Veche.ToString()">Вече</SelectItem>
+                <SelectItem Value="@Publisher.Nauka.ToString()">Наука</SelectItem>
+                <SelectItem Value="@Publisher.Mir.ToString()">Мир</SelectItem>
+            </Select>
+        </Field>
+
+        <Field>
+            <FieldLabel>Год издания *</FieldLabel>
+            <NumericEdit TValue="int" @bind-Value="UpdatedBook.Year" Min="1" Max="@DateTime.Today.Year" />
+        </Field>
+    </CardBody>
+</Card>
+
+<LoanRecordsDataGrid IsNested="true" BookId="BookId" />
+
+@code {
+    [Parameter]
+    public string Id { get; set; } = "";
+
+    private int BookId;
+    private BookCreateDto UpdatedBook = new();
+
+    private string InventoryNumberString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!int.TryParse(Id, out var id))
+            throw new Exception("Incorrect book ID");
+
+        BookId = id;
+        var book = await LibraryApi.GetBook(BookId);
+
+        UpdatedBook = new BookCreateDto
+        {
+            InventoryNumber = book.InventoryNumber,
+            Code = book.Code,
+            Authors = book.Authors,
+            Title = book.Title,
+            PublisherType = book.PublisherType,
+            Publisher = book.Publisher,
+            Year = book.Year
+        };
+
+        InventoryNumberString = UpdatedBook.InventoryNumber.ToString();
+    }
+
+    private async Task UpdateBookAsync()
+    {
+        if (!int.TryParse(InventoryNumberString, out var inv) || inv <= 0)
+            return;
+
+        UpdatedBook.InventoryNumber = inv;
+
+        await LibraryApi.UpdateBook(BookId, UpdatedBook);
+        NavManager.NavigateTo("/books");
+    }
+
+    private async Task DeleteBookAsync()
+    {
+        await LibraryApi.DeleteBook(BookId);
+        NavManager.NavigateTo("/books");
+    }
+}

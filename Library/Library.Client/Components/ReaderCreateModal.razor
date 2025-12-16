@@ -1,0 +1,125 @@
+﻿@inject LibraryApiWrapper LibraryApi
+
+<Modal @ref="ReaderModal">
+	<ModalContent Centered>
+		<Form>
+			<ModalHeader>
+				<ModalTitle>Новый читатель</ModalTitle>
+				<CloseButton Clicked="CloseReaderModalAsync" />
+			</ModalHeader>
+
+			<ModalBody>
+				<Field>
+					<FieldLabel>Фамилия *</FieldLabel>
+					<TextEdit @bind-Text="@NewReader.LastName"
+					Placeholder="Введите фамилию"
+					Validator="@(() => !string.IsNullOrWhiteSpace(NewReader.LastName))" />
+					@if (!string.IsNullOrWhiteSpace(NewReader.LastName) == false)
+					{
+							<small class="text-danger">Фамилия обязательна.</small>
+					}
+				</Field>
+				<Field>
+					<FieldLabel>Имя *</FieldLabel>
+					<TextEdit @bind-Text="@NewReader.FirstName"
+					Placeholder="Введите имя"
+					Validator="@(() => !string.IsNullOrWhiteSpace(NewReader.FirstName))" />
+					@if (!string.IsNullOrWhiteSpace(NewReader.FirstName) == false)
+					{
+							<small class="text-danger">Имя обязательно.</small>
+					}
+				</Field>
+				<Field>
+					<FieldLabel>Отчество *</FieldLabel>
+					<TextEdit @bind-Text="@NewReader.PatronymicName"
+					Placeholder="Введите отчество"
+					Validator="@(() => !string.IsNullOrWhiteSpace(NewReader.PatronymicName))" />
+					@if (!string.IsNullOrWhiteSpace(NewReader.PatronymicName) == false)
+					{
+							<small class="text-danger">Отчество обязательно.</small>
+					}
+				</Field>
+				<Field>
+					<FieldLabel>Адрес *</FieldLabel>
+					<TextEdit @bind-Text="@NewReader.Address"
+					Placeholder="Введите адрес"
+					Validator="@(() => !string.IsNullOrWhiteSpace(NewReader.Address))" />
+					@if (!string.IsNullOrWhiteSpace(NewReader.Address) == false)
+					{
+							<small class="text-danger">Адрес обязателен.</small>
+					}
+				</Field>
+				<Field>
+					<FieldLabel>Телефон *</FieldLabel>
+					<TextEdit @bind-Text="@NewReader.PhoneNumber"
+					Placeholder="+7 (999) 123-45-67"
+					Validator="@(() => !string.IsNullOrWhiteSpace(NewReader.PhoneNumber))" />
+					@if (!string.IsNullOrWhiteSpace(NewReader.PhoneNumber) == false)
+					{
+							<small class="text-danger">Телефон обязателен.</small>
+					}
+				</Field>
+				<Field>
+					<FieldLabel>Дата регистрации *</FieldLabel>
+					<DateEdit @bind-Date="@NewReader.RegistrationDate"
+					Validator="@(() => NewReader.RegistrationDate != default)" />
+					@if (NewReader.RegistrationDate == default)
+					{
+							<small class="text-danger">Дата регистрации обязательна.</small>
+					}
+				</Field>
+			</ModalBody>
+
+			<ModalFooter>
+				<Button Color="Color.Secondary" Clicked="CloseReaderModalAsync">Отмена</Button>
+				<Button Color="Color.Primary"
+				Clicked="CreateReaderAsync"
+				Disabled="!IsFormValid()">
+					Создать
+				</Button>
+			</ModalFooter>
+		</Form>
+	</ModalContent>
+</Modal>
+
+@code {
+	[Parameter]
+	public EventCallback OnReaderAdded { get; set; }
+
+	private Modal ReaderModal { get; set; } = new();
+
+	private ReaderCreateDto NewReader { get; set; } = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		NewReader.RegistrationDate = DateTime.Today;
+		await base.OnInitializedAsync();
+	}
+
+	public async Task Show()
+	{
+		NewReader = new() { RegistrationDate = DateTime.Today };
+		await ReaderModal.Show();
+	}
+
+	private async Task CloseReaderModalAsync() => await ReaderModal.Hide();
+
+	private bool IsFormValid() =>
+		!string.IsNullOrWhiteSpace(NewReader.FirstName) &&
+		!string.IsNullOrWhiteSpace(NewReader.LastName) &&
+		!string.IsNullOrWhiteSpace(NewReader.PatronymicName) &&
+		!string.IsNullOrWhiteSpace(NewReader.Address) &&
+		!string.IsNullOrWhiteSpace(NewReader.PhoneNumber) &&
+		NewReader.RegistrationDate != default;
+
+	private async Task CreateReaderAsync()
+	{
+		if (!IsFormValid()) return;
+
+
+		var result = await LibraryApi.CreateReader(NewReader);
+		await ReaderModal.Hide();
+		await OnReaderAdded.InvokeAsync();
+
+	}
+}

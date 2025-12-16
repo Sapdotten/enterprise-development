@@ -1,0 +1,117 @@
+﻿@inject LibraryApiWrapper LibraryApi
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Книги</h4>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary"
+                        Clicked="async () => await OpenCreateModal()">
+                    Создать
+                </Button>
+            </Column>
+        </Row>
+    </CardHeader>
+
+    <CardBody>
+        <DataGrid TItem="BookGetDto"
+                  Data="Books"
+                  PageSize="10"
+                  ShowPager>
+
+            <DataGridColumns>
+
+                <DataGridColumn Caption="Действия" Width="170px">
+                    <DisplayTemplate Context="book">
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                Действия
+                            </DropdownToggle>
+
+                            <DropdownMenu>
+                                <DropdownItem Clicked="async () => EditBook(book)">
+                                    Редактировать
+                                </DropdownItem>
+
+                                <DropdownItem Clicked="async () => IssueBook(book)">
+                                    Выдать книгу
+                                </DropdownItem>
+
+                                <DropdownDivider />
+
+                                <DropdownItem Color="Color.Danger"
+                                              Clicked="async () => DeleteBook(book)">
+                                    Удалить
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
+
+                <DataGridColumn Field="@nameof(BookGetDto.Title)"
+                                Caption="Название" />
+
+                <DataGridColumn Field="@nameof(BookGetDto.Authors)"
+                                Caption="Авторы" />
+
+                <DataGridColumn Field="@nameof(BookGetDto.Code)"
+                                Caption="Код" />
+
+                <DataGridColumn Field="@nameof(BookGetDto.InventoryNumber)"
+                                Caption="Инв. номер" />
+
+                <DataGridColumn Field="@nameof(BookGetDto.Publisher)"
+                                Caption="Издатель" />
+
+                <DataGridColumn Field="@nameof(BookGetDto.Year)"
+                                Caption="Год" />
+
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+<BookCreateModal @ref="BookCreateModal"
+                 OnBookAdded="Reload" />
+
+<LoanRecordCreateModal @ref="LoanModal"
+                       OnCreated="Reload" />
+
+@code {
+    private IList<BookGetDto> Books = [];
+
+    private BookCreateModal BookCreateModal = default!;
+    private LoanRecordCreateModal LoanModal = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Reload();
+    }
+
+    private async Task Reload()
+    {
+        Books = await LibraryApi.GetAllBooks();
+        StateHasChanged();
+    }
+
+    private Task OpenCreateModal()
+        => BookCreateModal.Show();
+
+    private Task EditBook(BookGetDto book)
+    {
+        NavManager.NavigateTo($"/books/{book.Id}");
+        return Task.CompletedTask;
+    }
+
+    private Task IssueBook(BookGetDto book)
+        => LoanModal.ShowWithBook(book.Id);
+
+    private async Task DeleteBook(BookGetDto book)
+    {
+        await LibraryApi.DeleteBook(book.Id);
+        await Reload();
+    }
+}

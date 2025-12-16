@@ -1,0 +1,138 @@
+﻿@inject LibraryApiWrapper LibraryApi
+@inject NavigationManager NavManager
+
+<Card>
+	<CardHeader>
+		<Row Class="justify-content-between">
+			<Column ColumnSize="ColumnSize.IsAuto">
+				<h4>Записи о выдаче</h4>
+			</Column>
+			<Column ColumnSize="ColumnSize.IsAuto">
+				<Button Color="Color.Primary"
+						Clicked="async () => await OpenCreateModal()">
+					Выдать книгу
+				</Button>
+			</Column>
+		</Row>
+	</CardHeader>
+
+	<CardBody>
+		<DataGrid TItem="LoanRecordViewModel"
+				  Data="LoanRecords"
+				  PageSize="10"
+				  key=@LoanRecords
+				  ShowPager="true">
+
+			<DataGridColumns>
+
+				<DataGridColumn Caption="Действия" Width="120px">
+					<DisplayTemplate Context="record">
+						<Button Color="Color.Danger"
+								Clicked="async () => await ReturnBook(record)">
+							Принять
+						</Button>
+					</DisplayTemplate>
+				</DataGridColumn>
+
+				<DataGridColumn Caption="Книга">
+					<DisplayTemplate Context="record">
+						<a @onclick="async () => await GoToBook(record.BookId)">
+							@record.BookTitle
+						</a>
+					</DisplayTemplate>
+				</DataGridColumn>
+
+				<DataGridColumn Caption="Читатель">
+					<DisplayTemplate Context="record">
+						<a @onclick="async () => await GoToReader(record.ReaderId)">
+							@record.ReaderName
+						</a>
+					</DisplayTemplate>
+				</DataGridColumn>
+
+				<DataGridColumn Field="@nameof(LoanRecordViewModel.IssueDate)"
+								Caption="Дата выдачи" />
+
+				<DataGridColumn Field="@nameof(LoanRecordViewModel.LoanTerm)"
+								Caption="Срок (дней)" />
+
+			</DataGridColumns>
+		</DataGrid>
+	</CardBody>
+</Card>
+
+<LoanRecordCreateModal @ref="CreateModal"
+					   OnCreated="Reload" />
+
+@code {
+	public sealed class LoanRecordViewModel
+	{
+		public int Id { get; init; }
+
+		public int BookId { get; init; }
+		public string BookTitle { get; init; } = string.Empty;
+
+		public int ReaderId { get; init; }
+		public string ReaderName { get; init; } = string.Empty;
+
+		public DateOnly IssueDate { get; init; }
+		public int LoanTerm { get; init; }
+	}
+
+	private IList<LoanRecordViewModel> LoanRecords = [];
+	private LoanRecordCreateModal CreateModal = default!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Reload();
+	}
+
+	private async Task Reload()
+	{
+		var loanRecords = await LibraryApi.GetAllLoanRecords();
+		var books = await LibraryApi.GetAllBooks();
+		var readers = await LibraryApi.GetAllReaders();
+
+		var bookDict = books.ToDictionary(b => b.Id);
+		var readerDict = readers.ToDictionary(r => r.Id);
+
+		LoanRecords = [.. loanRecords.Select(lr => new LoanRecordViewModel
+			{
+				Id = lr.Id,
+
+				BookId = lr.BookId,
+				BookTitle = bookDict.TryGetValue(lr.BookId, out var book)
+					? book.Title
+					: "Неизвестная книга",
+
+				ReaderId = lr.ReaderId,
+				ReaderName = readerDict.TryGetValue(lr.ReaderId, out var reader)
+					? $"{reader.LastName} {reader.FirstName}"
+					: "Неизвестный читатель",
+
+				IssueDate = DateOnly.FromDateTime(lr.IssueDate.DateTime),
+				LoanTerm = lr.LoanTerm
+			}).ToList()];
+	}
+
+	private async Task ReturnBook(LoanRecordViewModel record)
+	{
+		await LibraryApi.DeleteLoanRecord(record.Id);
+		await Reload();
+	}
+
+	private Task OpenCreateModal()
+		=> CreateModal.Show();
+
+	private Task GoToBook(int id)
+	{
+		NavManager.NavigateTo($"/books/{id}");
+		return Task.CompletedTask;
+	}
+
+	private Task GoToReader(int id)
+	{
+		NavManager.NavigateTo($"/readers/{id}");
+		return Task.CompletedTask;
+	}
+}

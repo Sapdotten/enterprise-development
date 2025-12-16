@@ -1,0 +1,106 @@
+﻿@page "/readers/{Id}"
+
+@inject LibraryApiWrapper LibraryApi
+@inject IJSRuntime JsRuntime
+@inject NavigationManager NavManager
+
+<Card>
+	<CardHeader>
+		<Row Class="justify-content-between">
+			<Column ColumnSize="ColumnSize.IsAuto">
+				<h4>Изменить читателя</h4>
+			</Column>
+			<Column ColumnSize="ColumnSize.IsAuto">
+				<Button Color="Color.Primary"
+						Clicked="UpdateReaderAsync">
+					Сохранить
+				</Button>
+
+				<Button Color="Color.Danger"
+						Clicked="DeleteReaderAsync">
+					Удалить
+				</Button>
+
+				<Button Color="Color.Secondary"
+						onclick="history.back();">
+					Закрыть
+				</Button>
+			</Column>
+		</Row>
+	</CardHeader>
+
+	<CardBody>
+		<Field>
+			<FieldLabel>Имя</FieldLabel>
+			<TextEdit @bind-Text="UpdatedReader.FirstName" />
+		</Field>
+
+		<Field>
+			<FieldLabel>Фамилия</FieldLabel>
+			<TextEdit @bind-Text="UpdatedReader.LastName" />
+		</Field>
+
+		<Field>
+			<FieldLabel>Отчество</FieldLabel>
+			<TextEdit @bind-Text="UpdatedReader.PatronymicName" />
+		</Field>
+
+		<Field>
+			<FieldLabel>Адрес</FieldLabel>
+			<TextEdit @bind-Text="UpdatedReader.Address" />
+		</Field>
+
+		<Field>
+			<FieldLabel>Телефон</FieldLabel>
+			<TextEdit @bind-Text="UpdatedReader.PhoneNumber" />
+		</Field>
+
+		<Field>
+			<FieldLabel>Дата регистрации</FieldLabel>
+			<DateEdit @bind-Date="UpdatedReader.RegistrationDate" />
+		</Field>
+	</CardBody>
+</Card>
+
+<LoanRecordsDataGrid IsNested="true"
+					 ReaderId="ReaderId" />
+
+@code {
+	[Parameter]
+	public string Id { get; set; } = "";
+
+	private int ReaderId;
+
+	private ReaderGetDto UpdatedReader = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (!int.TryParse(Id, out var id))
+			throw new Exception("Incorrect reader ID");
+
+		ReaderId = id;
+		UpdatedReader = await LibraryApi.GetReader(ReaderId);
+	}
+
+	private async Task UpdateReaderAsync()
+	{
+		var dto = new ReaderCreateDto
+			{
+				FirstName = UpdatedReader.FirstName,
+				LastName = UpdatedReader.LastName,
+				PatronymicName = UpdatedReader.PatronymicName,
+				Address = UpdatedReader.Address,
+				PhoneNumber = UpdatedReader.PhoneNumber,
+				RegistrationDate = UpdatedReader.RegistrationDate
+			};
+
+		UpdatedReader = await LibraryApi.UpdateReader(ReaderId, dto);
+		NavManager.NavigateTo("/readers");
+	}
+
+	private async Task DeleteReaderAsync()
+	{
+		await LibraryApi.DeleteReader(ReaderId);
+		NavManager.NavigateTo("/readers");
+	}
+}

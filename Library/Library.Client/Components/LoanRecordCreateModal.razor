@@ -1,0 +1,134 @@
+﻿@inject LibraryApiWrapper LibraryApi
+
+<Modal @ref="Modal">
+    <ModalContent Centered>
+        <Form>
+
+            <ModalHeader>
+                <ModalTitle>Выдать книгу</ModalTitle>
+                <CloseButton Clicked="Close" />
+            </ModalHeader>
+
+            <ModalBody>
+
+                <Field>
+                    <FieldLabel>Читатель</FieldLabel>
+                    <Select TValue="int"
+                            Disabled="@IsReaderFixed"
+                            @bind-SelectedValue="Model.ReaderId">
+                        <SelectItem Value="0">-- выберите --</SelectItem>
+                        @foreach (var reader in Readers)
+                        {
+                                <SelectItem Value="@reader.Id">
+                                @reader.LastName @reader.FirstName @reader.PatronymicName
+                                </SelectItem>
+                        }
+                    </Select>
+                </Field>
+
+                <Field>
+                    <FieldLabel>Книга</FieldLabel>
+                    <Select TValue="int"
+                            @bind-SelectedValue="Model.BookId">
+                        <SelectItem Value="0">-- выберите --</SelectItem>
+                        @foreach (var book in Books)
+                        {
+                                <SelectItem Value="@book.Id">
+                                @book.Title (@book.Authors)
+                                </SelectItem>
+                        }
+                    </Select>
+                </Field>
+
+                <Field>
+                    <FieldLabel>Дата выдачи</FieldLabel>
+                    <DateEdit @bind-Date="Model.IssueDate" />
+                </Field>
+
+                <Field>
+                    <FieldLabel>Срок (дней)</FieldLabel>
+                    <NumericEdit TValue="int"
+                                 Min="1"
+                                 Max="365"
+                                 @bind-Value="Model.LoanTerm" />
+                </Field>
+
+            </ModalBody>
+
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="Close">Отмена</Button>
+                <Button Color="Color.Primary"
+                        Clicked="Create"
+                        Disabled="!IsValid">
+                    Выдать
+                </Button>
+            </ModalFooter>
+
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter] public EventCallback OnCreated { get; set; }
+
+    private Modal Modal = default!;
+    private LoanRecordCreateDto Model = new();
+
+    private List<BookGetDto> Books = new();
+    private List<ReaderGetDto> Readers = new();
+
+    private bool IsReaderFixed;
+
+    public async Task Show()
+        => await Show(0);
+
+    public async Task Show(int readerId)
+    {
+        Books = (await LibraryApi.GetAllBooks()).ToList();
+        Readers = (await LibraryApi.GetAllReaders()).ToList();
+
+        Model = new LoanRecordCreateDto
+            {
+                ReaderId = readerId,
+                IssueDate = DateTime.Today,
+                LoanTerm = 14
+            };
+
+        IsReaderFixed = readerId > 0;
+
+        await Modal.Show();
+    }
+
+    public async Task ShowWithBook(int bookId)
+    {
+        Books = (await LibraryApi.GetAllBooks()).ToList();
+        Readers = (await LibraryApi.GetAllReaders()).ToList();
+
+        Model = new LoanRecordCreateDto
+            {
+                BookId = bookId,
+                IssueDate = DateTime.Today,
+                LoanTerm = 14
+            };
+
+        await Modal.Show();
+    }
+
+    private async Task Close()
+        => await Modal.Hide();
+
+    private bool IsValid =>
+        Model.ReaderId > 0 &&
+        Model.BookId > 0 &&
+        Model.LoanTerm > 0 &&
+        Model.IssueDate != default;
+
+    private async Task Create()
+    {
+        if (!IsValid) return;
+
+        await LibraryApi.CreateLoanRecord(Model);
+        await Modal.Hide();
+        await OnCreated.InvokeAsync();
+    }
+}

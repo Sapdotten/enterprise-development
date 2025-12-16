@@ -1,0 +1,184 @@
+﻿@inject LibraryApiWrapper LibraryApi
+
+<Modal @ref="BookModal">
+    <ModalContent Centered>
+        <Form>
+            <ModalHeader>
+                <ModalTitle>Новая книга</ModalTitle>
+                <CloseButton Clicked="CloseBookModalAsync" />
+            </ModalHeader>
+
+            <ModalBody>
+
+                <Field>
+                    <FieldLabel>Инвентарный номер *</FieldLabel>
+                    <FieldBody>
+                        <TextEdit @bind-Text="InventoryNumberString"
+                                  Placeholder="1001" />
+
+                        @if (!int.TryParse(InventoryNumberString, out var inv) || inv <= 0)
+                        {
+                                <small class="text-danger">Обязательное поле.</small>
+                        }
+                    </FieldBody>
+                </Field>
+
+                <Field>
+                    <FieldLabel>Код *</FieldLabel>
+                    <FieldBody>
+                        <TextEdit @bind-Text="NewBook.Code"
+                                  Placeholder="PEL101" />
+
+                        @if (string.IsNullOrWhiteSpace(NewBook.Code))
+                        {
+                                <small class="text-danger">Обязательное поле.</small>
+                        }
+                    </FieldBody>
+                </Field>
+
+                <Field>
+                    <FieldLabel>Авторы *</FieldLabel>
+                    <FieldBody>
+                        <TextEdit @bind-Text="NewBook.Authors"
+                                  Placeholder="Виктор Пелевин" />
+
+                        @if (string.IsNullOrWhiteSpace(NewBook.Authors))
+                        {
+                                <small class="text-danger">Обязательное поле.</small>
+                        }
+                    </FieldBody>
+                </Field>
+
+                <Field>
+                    <FieldLabel>Название *</FieldLabel>
+                    <FieldBody>
+                        <TextEdit @bind-Text="NewBook.Title"
+                                  Placeholder="Чапаев и Пустота" />
+
+                        @if (string.IsNullOrWhiteSpace(NewBook.Title))
+                        {
+                                <small class="text-danger">Обязательное поле.</small>
+                        }
+                    </FieldBody>
+                </Field>
+
+<Field>
+    <FieldLabel>Тип издания *</FieldLabel>
+    <FieldBody>
+        <Select TValue="string"
+                @bind-SelectedValue="NewBook.PublisherType">
+            <SelectItem Value="@PublisherType.Commercial.ToString()">Коммерческое</SelectItem>
+            <SelectItem Value="@PublisherType.Academic.ToString()">Академическое</SelectItem>
+            <SelectItem Value="@PublisherType.Educational.ToString()">Учебное</SelectItem>
+        </Select>
+
+                        @if (string.IsNullOrWhiteSpace(NewBook.PublisherType))
+                        {
+                <small class="text-danger">Обязательное поле.</small>
+                        }
+    </FieldBody>
+</Field>
+
+<Field>
+    <FieldLabel>Издатель *</FieldLabel>
+    <FieldBody>
+        <Select TValue="string"
+                @bind-SelectedValue="NewBook.Publisher">
+            <SelectItem Value="@Publisher.Eksmo.ToString()">ЕКСМО</SelectItem>
+            <SelectItem Value="@Publisher.AST.ToString()">АСТ</SelectItem>
+            <SelectItem Value="@Publisher.AdMarginem.ToString()">Ad Marginem</SelectItem>
+            <SelectItem Value="@Publisher.Binom.ToString()">Бином</SelectItem>
+            <SelectItem Value="@Publisher.Veche.ToString()">Вече</SelectItem>
+            <SelectItem Value="@Publisher.Nauka.ToString()">Наука</SelectItem>
+            <SelectItem Value="@Publisher.Mir.ToString()">Мир</SelectItem>
+        </Select>
+
+                        @if (string.IsNullOrWhiteSpace(NewBook.Publisher))
+                        {
+                <small class="text-danger">Обязательное поле.</small>
+                        }
+    </FieldBody>
+</Field>
+
+<Field>
+    <FieldLabel>Год издания *</FieldLabel>
+    <FieldBody>
+        <NumericEdit TValue="int"
+                     @bind-Value="NewBook.Year"
+                     Min="1"
+                     Max="@DateTime.Today.Year"
+                     Placeholder="2025" />
+
+                        @if (NewBook.Year <= 0 || NewBook.Year > DateTime.Today.Year)
+                        {
+                <small class="text-danger">Введите корректный год.</small>
+                        }
+    </FieldBody>
+</Field>
+
+            </ModalBody>
+
+            <ModalFooter>
+                <Button Color="Color.Secondary" Clicked="CloseBookModalAsync">
+                    Отмена
+                </Button>
+
+                <Button Color="Color.Primary"
+                        Clicked="CreateBookAsync"
+                        Disabled="!IsFormValid()">
+                    Создать
+                </Button>
+            </ModalFooter>
+        </Form>
+    </ModalContent>
+</Modal>
+
+@code {
+    [Parameter]
+    public EventCallback OnBookAdded { get; set; }
+
+    private Modal BookModal { get; set; } = new();
+
+    private BookCreateDto NewBook { get; set; } = new();
+
+    private string InventoryNumberString { get; set; } = string.Empty;
+
+    public async Task Show()
+    {
+        NewBook = new();
+        InventoryNumberString = string.Empty;
+        await BookModal.Show();
+    }
+
+    private async Task CloseBookModalAsync()
+    {
+        await BookModal.Hide();
+    }
+
+    private bool IsFormValid()
+    {
+        if (!int.TryParse(InventoryNumberString, out var inv) || inv <= 0)
+            return false;
+
+        return
+            !string.IsNullOrWhiteSpace(NewBook.Code) &&
+            !string.IsNullOrWhiteSpace(NewBook.Authors) &&
+            !string.IsNullOrWhiteSpace(NewBook.Title) &&
+            !string.IsNullOrWhiteSpace(NewBook.PublisherType) &&
+            !string.IsNullOrWhiteSpace(NewBook.Publisher) &&
+            NewBook.Year > 0 &&
+            NewBook.Year <= DateTime.Today.Year;
+    }
+
+    private async Task CreateBookAsync()
+    {
+        if (!IsFormValid())
+            return;
+
+        NewBook.InventoryNumber = int.Parse(InventoryNumberString);
+
+        await LibraryApi.CreateBook(NewBook);
+        await BookModal.Hide();
+        await OnBookAdded.InvokeAsync();
+    }
+}

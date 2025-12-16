@@ -1,0 +1,217 @@
+﻿@page "/"
+
+@inject LibraryApiWrapper LibraryApi
+
+<h3 class="mb-4">Аналитические запросы библиотеки</h3>
+
+<Card Margin="Margin.Is4.OnY">
+    <CardHeader Class="py-3">
+        <Row Class="justify-content-between align-items-center">
+            <Column>
+                <h5 class="mb-0">
+                    <Icon Name="IconName.Book" class="me-2" />
+                    Все выданные книги (по количеству выдач)
+                </h5>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Size="Size.Small" Clicked="LoadLoanedBooks">
+                    Получить
+                </Button>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <MemoEdit
+            Text="@_loanedBooks"
+            AutoSize
+            ReadOnly
+            Class="analytics-output" />
+    </CardBody>
+</Card>
+
+<Card Margin="Margin.Is4.OnY">
+    <CardHeader Class="py-3">
+        <Row Class="justify-content-between align-items-center">
+            <Column>
+                <h5 class="mb-0">
+                    <Icon Name="IconName.Users" class="me-2" />
+                    Топ читателей по количеству выдач
+                </h5>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Size="Size.Small" Clicked="LoadTopReadersByCount">
+                    Получить
+                </Button>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <MemoEdit
+            Text="@_topReadersByCount"
+            AutoSize
+            ReadOnly
+            Class="analytics-output" />
+    </CardBody>
+</Card>
+
+<Card Margin="Margin.Is4.OnY">
+    <CardHeader Class="py-3">
+        <Row Class="justify-content-between align-items-center">
+            <Column>
+                <h5 class="mb-0">
+                    <Icon Name="IconName.Clock" class="me-2" />
+                    Читатели с самым долгим сроком пользования книгой
+                </h5>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Size="Size.Small" Clicked="LoadTopReadersByDuration">
+                    Получить
+                </Button>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <MemoEdit
+            Text="@_topReadersByDuration"
+            AutoSize
+            ReadOnly
+            Class="analytics-output" />
+    </CardBody>
+</Card>
+
+<Card Margin="Margin.Is4.OnY">
+    <CardHeader Class="py-3">
+        <Row Class="justify-content-between align-items-center">
+            <Column>
+                <h5 class="mb-0">
+                    <Icon Name="IconName.Bell" class="me-2" />
+                    Топ издателей по количеству выдач
+                </h5>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Size="Size.Small" Clicked="LoadTopPublishers">
+                    Получить
+                </Button>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <MemoEdit
+            Text="@_topPublishers"
+            AutoSize
+            ReadOnly
+            Class="analytics-output" />
+    </CardBody>
+</Card>
+
+<Card Margin="Margin.Is4.OnY">
+    <CardHeader Class="py-3">
+        <Row Class="justify-content-between align-items-center">
+            <Column>
+                <h5 class="mb-0">
+                    <Icon Name="IconName.Star" class="me-2" />
+                    Наименее популярные книги
+                </h5>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary" Size="Size.Small" Clicked="LoadLeastPopularBooks">
+                    Получить
+                </Button>
+            </Column>
+        </Row>
+    </CardHeader>
+    <CardBody>
+        <MemoEdit
+            Text="@_leastPopularBooks"
+            AutoSize
+            ReadOnly
+            Class="analytics-output" />
+    </CardBody>
+</Card>
+
+@code {
+    private string _loanedBooks = "Запросите данные";
+    private string _topReadersByCount = "Запросите данные";
+    private string _topReadersByDuration = "Запросите данные";
+    private string _topPublishers = "Запросите данные";
+    private string _leastPopularBooks = "Запросите данные";
+
+    private readonly DateOnly _start = new(2000, 1, 1);
+    private readonly DateOnly _end = DateOnly.FromDateTime(DateTime.Today);
+
+    private async Task LoadLoanedBooks()
+    {
+        var data = await LibraryApi.GetLoanedBooks();
+        _loanedBooks = BooksToText(data);
+    }
+
+    private async Task LoadTopReadersByCount()
+    {
+        var data = await LibraryApi.GetTopReadersByLoanCount(_start, _end);
+        _topReadersByCount = ReadersByCountToText(data);
+    }
+
+    private async Task LoadTopReadersByDuration()
+    {
+        var data = await LibraryApi.GetTopReadersByLongestLoan();
+        _topReadersByDuration = ReadersByDurationToText(data);
+    }
+
+    private async Task LoadTopPublishers()
+    {
+        var data = await LibraryApi.GetTopPublishersByLoanCount(_start, _end);
+        _topPublishers = PublishersToText(data);
+    }
+
+    private async Task LoadLeastPopularBooks()
+    {
+        var data = await LibraryApi.GetLeastPopularBooks(_start, _end);
+        _leastPopularBooks = BooksToText(data);
+    }
+
+    private static string BooksToText(IList<BookLoanCountDto> books)
+    {
+        if (!books.Any()) return "Нет данных";
+
+        var sb = new StringBuilder();
+        foreach (var b in books)
+            sb.AppendLine(
+                $"{b.Title} — {b.Authors}. {b.Publisher}, {b.Year}. Выдач: {b.LoanCount}"
+            );
+        return sb.ToString();
+    }
+
+    private static string ReadersByCountToText(IList<ReaderLoanCountDto> readers)
+    {
+        if (!readers.Any()) return "Нет данных";
+
+        var sb = new StringBuilder();
+        foreach (var r in readers)
+            sb.AppendLine(
+                $"{r.LastName} {r.FirstName} {r.PatronymicName} — {r.LoanCount} книг"
+            );
+        return sb.ToString();
+    }
+
+    private static string ReadersByDurationToText(IList<ReaderLoanDurationDto> readers)
+    {
+        if (!readers.Any()) return "Нет данных";
+
+        var sb = new StringBuilder();
+        foreach (var r in readers)
+            sb.AppendLine(
+                $"{r.LastName} {r.FirstName} {r.PatronymicName} — {r.Duration} дней"
+            );
+        return sb.ToString();
+    }
+
+    private static string PublishersToText(IList<PublisherLoanCountDto> publishers)
+    {
+        if (!publishers.Any()) return "Нет данных";
+
+        var sb = new StringBuilder();
+        foreach (var p in publishers)
+            sb.AppendLine($"{p.PublisherName} — {p.LoanCount} выдач");
+        return sb.ToString();
+    }
+}

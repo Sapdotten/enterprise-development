@@ -1,0 +1,108 @@
+.navbar-toggler {
+    background-color: rgba(138, 43, 226, 0.2) !important;
+}
+
+.top-row {
+    height: 3.5rem;
+    background-color: #2a2a40 !important;
+    border-radius: 0.0rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.navbar-brand {
+    font-size: 1.3rem;
+    color: #b8a3ff !important;
+
+}
+
+    .navbar-brand:hover {
+        color: #d0b0ff !important;
+    }
+
+
+.bi {
+    display: inline-block;
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-right: 0.75rem;
+    top: -1px;
+    background-size: cover;
+}
+
+.bi-library-cat-nav-menu {
+    background-image: url('/images/sad-cat.png');
+    background-size: contain;
+    vertical-align: middle;
+}
+
+.bi-home-cat-nav-menu {
+    background-image: url('/images/home-cat.jpg')
+}
+
+.bi-cat-nav-menu {
+    background-image: url('/images/loading-cat.gif')
+}
+.bi-dancing-cat-nav-menu {
+    background-image: url('/images/dancing-cat.gif')
+}
+.bi-angry-cat-nav-menu {
+    background-image: url('/images/angry-cat.gif')
+}
+
+
+.nav-scrollable {
+    height: calc(100vh - 3.5rem);
+    overflow-y: auto;
+    border-radius: 0.5rem;
+    background: linear-gradient(to bottom, #2a2a40, #3a2a5a) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    padding: 0.5rem 0;
+}
+
+.nav-item {
+    font-size: 1rem;
+    padding-bottom: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+    .nav-item:first-of-type {
+        padding-top: 1rem;
+    }
+
+    .nav-item:last-of-type {
+        padding-bottom: 1rem;
+    }
+
+    .nav-item ::deep a {
+        color: #d7d7d7 !important;
+        border-radius: 0.5rem !important;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        line-height: 3rem;
+        padding: 0 0.75rem;
+        transition: all 0.2s;
+    }
+
+        .nav-item ::deep a.active {
+            background-color: #8a2be2 !important;
+            color: #fff !important;
+            box-shadow: 0 4px 8px rgba(138,43,226,0.5);
+        }
+
+        .nav-item ::deep a:hover {
+            background-color: rgba(138,43,226,0.2) !important;
+            color: #fff !important;
+            box-shadow: 0 4px 8px rgba(138,43,226,0.4);
+        }
+
+@media (min-width: 641px) {
+    .navbar-toggler {
+        display: none;
+    }
+
+    .collapse {
+        display: block !important;
+    }
+}

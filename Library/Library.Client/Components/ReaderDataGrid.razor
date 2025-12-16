@@ -1,0 +1,107 @@
+﻿@inject LibraryApiWrapper LibraryApi
+@inject NavigationManager NavManager
+
+<Card>
+    <CardHeader>
+        <Row Class="justify-content-between">
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <h4>Читатели</h4>
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto">
+                <Button Color="Color.Primary"
+                        Clicked="async () => await OpenCreateModal()">
+                    Создать
+                </Button>
+            </Column>
+        </Row>
+    </CardHeader>
+
+    <CardBody>
+        <DataGrid TItem="ReaderGetDto"
+                  Data="Readers"
+                  PageSize="10"
+                  ShowPager>
+
+            <DataGridColumns>
+
+                <DataGridColumn Caption="Действия" Width="160px">
+                    <DisplayTemplate Context="reader">
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Primary">
+                                Действия
+                            </DropdownToggle>
+
+                            <DropdownMenu>
+                                <DropdownItem Clicked="async () => EditReader(reader)">
+                                    Редактировать
+                                </DropdownItem>
+
+                                <DropdownItem Clicked="async () => IssueBook(reader)">
+                                    Выдать книгу
+                                </DropdownItem>
+
+                                <DropdownDivider />
+
+                                <DropdownItem Color="Color.Danger"
+                                              Clicked="async () => DeleteReader(reader)">
+                                    Удалить
+                                </DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </DisplayTemplate>
+                </DataGridColumn>
+
+                <DataGridColumn Field="@nameof(ReaderGetDto.LastName)"
+                                Caption="Фамилия" />
+
+                <DataGridColumn Field="@nameof(ReaderGetDto.FirstName)"
+                                Caption="Имя" />
+
+                <DataGridColumn Field="@nameof(ReaderGetDto.PatronymicName)"
+                                Caption="Отчество" />
+
+            </DataGridColumns>
+        </DataGrid>
+    </CardBody>
+</Card>
+
+<ReaderCreateModal @ref="ReaderCreateModal"
+                   OnReaderAdded="Reload" />
+
+<LoanRecordCreateModal @ref="LoanModal"
+                       OnCreated="Reload" />
+
+@code {
+    private IList<ReaderGetDto> Readers = [];
+    private ReaderCreateModal ReaderCreateModal = default!;
+    private LoanRecordCreateModal LoanModal = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Reload();
+    }
+
+    private async Task Reload()
+    {
+        Readers = await LibraryApi.GetAllReaders();
+        StateHasChanged();
+    }
+
+    private Task OpenCreateModal()
+        => ReaderCreateModal.Show();
+
+    private Task EditReader(ReaderGetDto reader)
+    {
+        NavManager.NavigateTo($"/readers/{reader.Id}");
+        return Task.CompletedTask;
+    }
+
+    private Task IssueBook(ReaderGetDto reader)
+        => LoanModal.Show(reader.Id);
+
+    private async Task DeleteReader(ReaderGetDto reader)
+    {
+        await LibraryApi.DeleteReader(reader.Id);
+        await Reload();
+    }
+}
