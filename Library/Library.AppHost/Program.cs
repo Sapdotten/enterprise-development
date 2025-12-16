@@ -40,5 +40,10 @@ var api = builder.AddProject<Projects.Library_Api>("library-api")
     .WithReference(postgres, "DefaultConnection")
     .WaitFor(postgres);
 
+var client = builder.AddProject<Projects.Library_Client>("library-client")
+    .WithReference(api)
+    .WaitFor(api);
+
+
 
 builder.Build().Run();

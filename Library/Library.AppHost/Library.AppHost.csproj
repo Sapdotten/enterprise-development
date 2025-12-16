@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
 
@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Library.Api\Library.Api.csproj" />
+    <ProjectReference Include="..\Library.Client\Library.Client.csproj" />
     <ProjectReference Include="..\Library.Generator.Kafka\Library.Generator.Kafka.csproj" />
   </ItemGroup>
 
