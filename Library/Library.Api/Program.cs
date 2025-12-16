@@ -57,6 +57,14 @@ builder.Services.AddScoped<ILoanRecordService, LoanRecordService>();
 
 builder.Services.AddHostedService<KafkaConsumer>();
 
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
+{
+    policy.AllowAnyOrigin();
+    policy.AllowAnyMethod();
+    policy.AllowAnyHeader();
+}));
+
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
@@ -74,10 +82,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseCors();
 
 app.Run();
