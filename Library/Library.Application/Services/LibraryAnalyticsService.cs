@@ -23,24 +23,39 @@ public class LibraryAnalyticsService(
     /// </summary>
     /// <param name="date">The reference date to evaluate active loans.</param>
     /// <returns>List of books on loan, mapped to BookGetDTO and sorted by title.</returns>
-    public async Task<List<BookGetDto>> GetLoanedBooksOrderedByTitleAsync(DateOnly date)
+    public async Task<List<BookLoanCountDto>> GetLoanedBooksOrderedByTitleAsync(DateOnly date)
     {
         var loanRecords = await loanRecordRepository.ReadAllAsync();
         var books = await bookRepository.ReadAllAsync();
 
-        var loanedBooks = loanRecords
-            .Where(lr => lr.IssueDate <= date && lr.IssueDate.AddDays(lr.LoanTerm) >= date)
-            .GroupBy(lr => lr.BookId)
-            .Join(
-                books,
-                lr => lr.Key,
-                b => b.Id,
-                (lr, b) => b
-            )
-            .OrderBy(b => b.Title)
-            .ToList();
+        var result =
+            loanRecords
+                .Where(lr =>
+                    lr.IssueDate <= date &&
+                    lr.IssueDate.AddDays(lr.LoanTerm) >= date
+                )
+                .GroupBy(lr => lr.BookId)
+                .Join(
+                    books,
+                    g => g.Key,
+                    b => b.Id,
+                    (g, b) => new BookLoanCountDto
+                    {
+                        Id = b.Id,
+                        InventoryNumber = b.InventoryNumber,
+                        Code = b.Code,
+                        Authors = b.Authors,
+                        Title = b.Title,
+                        PublisherType = b.PublisherType.ToString(),
+                        Publisher = b.Publisher.ToString(),
+                        Year = b.Year,
+                        LoanCount = g.Count()
+                    }
+                )
+                .OrderBy(b => b.Title)
+                .ToList();
 
-        return mapper.Map<List<BookGetDto>>(loanedBooks);
+        return result;
     }
 
     /// <summary>

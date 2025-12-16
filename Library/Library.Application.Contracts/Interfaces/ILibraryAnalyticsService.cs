@@ -13,7 +13,7 @@ public interface ILibraryAnalyticsService
     /// </summary>
     /// <param name="date">The reference date to evaluate active loans.</param>
     /// <returns>List of books on loan, ordered by title. Returns empty list if none found.</returns>
-    public Task<List<BookGetDto>> GetLoanedBooksOrderedByTitleAsync(DateOnly date);
+    public Task<List<BookLoanCountDto>> GetLoanedBooksOrderedByTitleAsync(DateOnly date);
 
     /// <summary>
     /// Retrieves the top readers who borrowed the highest number of books within a given time period.
