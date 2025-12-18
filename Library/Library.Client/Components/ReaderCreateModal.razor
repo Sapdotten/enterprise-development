@@ -16,7 +16,7 @@
 					Validator="@(() => !string.IsNullOrWhiteSpace(NewReader.LastName))" />
 					@if (!string.IsNullOrWhiteSpace(NewReader.LastName) == false)
 					{
-							<small class="text-danger">Фамилия обязательна.</small>
+						<small class="text-danger">Фамилия обязательна.</small>
 					}
 				</Field>
 				<Field>
@@ -26,7 +26,7 @@
 					Validator="@(() => !string.IsNullOrWhiteSpace(NewReader.FirstName))" />
 					@if (!string.IsNullOrWhiteSpace(NewReader.FirstName) == false)
 					{
-							<small class="text-danger">Имя обязательно.</small>
+						<small class="text-danger">Имя обязательно.</small>
 					}
 				</Field>
 				<Field>
@@ -36,7 +36,7 @@
 					Validator="@(() => !string.IsNullOrWhiteSpace(NewReader.PatronymicName))" />
 					@if (!string.IsNullOrWhiteSpace(NewReader.PatronymicName) == false)
 					{
-							<small class="text-danger">Отчество обязательно.</small>
+						<small class="text-danger">Отчество обязательно.</small>
 					}
 				</Field>
 				<Field>
@@ -46,7 +46,7 @@
 					Validator="@(() => !string.IsNullOrWhiteSpace(NewReader.Address))" />
 					@if (!string.IsNullOrWhiteSpace(NewReader.Address) == false)
 					{
-							<small class="text-danger">Адрес обязателен.</small>
+						<small class="text-danger">Адрес обязателен.</small>
 					}
 				</Field>
 				<Field>
@@ -56,16 +56,7 @@
 					Validator="@(() => !string.IsNullOrWhiteSpace(NewReader.PhoneNumber))" />
 					@if (!string.IsNullOrWhiteSpace(NewReader.PhoneNumber) == false)
 					{
-							<small class="text-danger">Телефон обязателен.</small>
-					}
-				</Field>
-				<Field>
-					<FieldLabel>Дата регистрации *</FieldLabel>
-					<DateEdit @bind-Date="@NewReader.RegistrationDate"
-					Validator="@(() => NewReader.RegistrationDate != default)" />
-					@if (NewReader.RegistrationDate == default)
-					{
-							<small class="text-danger">Дата регистрации обязательна.</small>
+						<small class="text-danger">Телефон обязателен.</small>
 					}
 				</Field>
 			</ModalBody>
@@ -109,8 +100,7 @@
 		!string.IsNullOrWhiteSpace(NewReader.LastName) &&
 		!string.IsNullOrWhiteSpace(NewReader.PatronymicName) &&
 		!string.IsNullOrWhiteSpace(NewReader.Address) &&
-		!string.IsNullOrWhiteSpace(NewReader.PhoneNumber) &&
-		NewReader.RegistrationDate != default;
+		!string.IsNullOrWhiteSpace(NewReader.PhoneNumber);
 
 	private async Task CreateReaderAsync()
 	{
